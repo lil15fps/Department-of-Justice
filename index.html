@@ -30,9 +30,9 @@
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 5px;
+            background-color: transparent;
+            box-shadow: none;
+            border-radius: 0;
             margin-top: 20px;
             margin-bottom: 20px;
         }
@@ -181,7 +181,6 @@
             background-color: #c0392b;
         }
         .limite-alcanzado {
-            color: #e74c3c;
             font-weight: bold;
         }
     </style>
@@ -929,7 +928,7 @@
 
                 totalMin.textContent = total;
                 
-                // Verificar si se alcanzó el límite de minutos
+                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
                 if (total >= LIMITE_MINUTOS) {
                     totalMin.classList.add('limite-alcanzado');
                 } else {
@@ -952,7 +951,7 @@
                     estadoFianza.innerHTML = `$0`;
                 }
 
-                // Verificar si se alcanzó el límite de fianza
+                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
                     const spanFianza = estadoFianza.querySelector('span');
                     if (spanFianza) {
@@ -1078,7 +1077,7 @@
 
                 totalMin.textContent = total;
                 
-                // Verificar si se alcanzó el límite de minutos
+                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
                 if (total >= LIMITE_MINUTOS) {
                     totalMin.classList.add('limite-alcanzado');
                 } else {
@@ -1101,7 +1100,7 @@
                     estadoFianza.innerHTML = `$0`;
                 }
 
-                // Verificar si se alcanzó el límite de fianza
+                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
                     const spanFianza = estadoFianza.querySelector('span');
                     if (spanFianza) {
