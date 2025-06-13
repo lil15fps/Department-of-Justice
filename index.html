@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/UWq89vP.png">
     <meta charset="UTF-8">
     <title>Department of Justice</title>
     <style>
@@ -186,9 +187,10 @@
     </style>
 </head>
 <body>
-    <header>
-        <img src="https://i.imgur.com/fIEstge.png" alt="Título Código Penal" style="max-width: 100%; height: auto;">
-    </header>
+    <header style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+    <img src="https://i.imgur.com/UWq89vP.png" alt="DOJ Logo" style="height: 30px;">
+    <span style="font-size: 1em;">Department of Justice</span>
+</header>
     
     <div class="container">
         <input type="text" id="searchInput" placeholder="Buscar artículo o cargos...">
@@ -944,9 +946,9 @@
                 if (tieneSinFianza) {
                     estadoFianza.innerHTML = `<span class="fianza-sin">SIN FIANZA</span>`;
                 } else if (tieneObligatoria) {
-                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA)} - OBLIGATORIA</span>`;
+                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OBLIGATORIA</span>`;
                 } else if (tieneOpcional) {
-                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA)} - OPCIONAL</span>`;
+                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OPCIONAL</span>`;
                 } else {
                     estadoFianza.innerHTML = `$0`;
                 }
@@ -1093,9 +1095,9 @@
                 if (tieneSinFianza) {
                     estadoFianza.innerHTML = `<span class="fianza-sin">SIN FIANZA</span>`;
                 } else if (tieneObligatoria) {
-                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA)} - OBLIGATORIA</span>`;
+                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OBLIGATORIA</span>`;
                 } else if (tieneOpcional) {
-                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA)} - OPCIONAL</span>`;
+                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OPCIONAL</span>`;
                 } else {
                     estadoFianza.innerHTML = `$0`;
                 }
