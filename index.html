@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/UWq89vP.png">
+    <meta charset="UTF-8">
+    <title>Department of Justice</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://i.imgur.com/nT9H0Ni.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        header {
+            background-color: #00274d;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            border-bottom: 5px solid #d4af37;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: transparent;
+            box-shadow: none;
+            border-radius: 0;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #00274d;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: white;
+            color: #333;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: block;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #00274d;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        tr {
+            transition: background-color 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        tr:hover {
+            background-color: #e6f2ff;
+            cursor: pointer;
+        }
+        .category {
+            background-color: #00274d;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 15px;
+            border-left: 5px solid #d4af37;
+            margin: 40px 0 10px;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .category:before {
+            content: "";
+            background-image: url('https://i.imgur.com/UWq89vP.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        .category:after {
+            content: "+";
+            font-size: 1.2em;
+            margin-left: auto;
+        }
+        .category.active:after {
+            content: "-";
+        }
+        .fianza-opcional { 
+            background-color: #3498db; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .fianza-obligatoria { 
+            background-color: #006400; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .fianza-sin { 
+            background-color: #e74c3c; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .selected { 
+            background-color: #d4e6ff !important; 
+            border-left: 4px solid #00274d;
+        }
+        .summary {
+            border: 2px solid #00274d;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .summary h3 {
+            color: #00274d;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        #lista-cargos {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        #lista-cargos li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #total-min, #estado-fianza {
+            font-weight: bold;
+            color: #00274d;
+        }
+        .lspd-badge {
+            width: 80px;
+            height: 80px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.8;
+        }
+        .btn-eliminar {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-eliminar:hover {
+            background-color: #c0392b;
+        }
+        .limite-alcanzado {
+            font-weight: bold;
+        }
+        
+        /* Estilos para el modal de selección de minutos */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .modal-header h3 {
+            margin: 0;
+            color: #00274d;
+        }
+        .close {
+            color: #aaa;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .modal-body {
+            margin-bottom: 15px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-confirmar {
+            background-color: #00274d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-confirmar:hover {
+            background-color: #001a33;
+        }
+        .minutos-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .rango-minutos {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Nuevos estilos para la calculadora de multas por armas */
+        .calculadora-container {
+            margin-bottom: 20px;
+        }
+        
+        .calculadora-header {
+            background-color: #00274d;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 15px;
+            border-left: 5px solid #d4af37;
+            margin: 40px 0 0;
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calculadora-header:before {
+            content: "";
+            background-image: url('https://i.imgur.com/UWq89vP.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        
+        .calculadora-header:after {
+            content: "+";
+            font-size: 1.2em;
+        }
+        
+        .calculadora-header.active:after {
+            content: "-";
+        }
+        
+        .multas-armas {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .multas-armas.active {
+            display: table;
+        }
+        
+        .multas-armas th, .multas-armas td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .multas-armas th {
+            background-color: #00274d;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .multas-armas tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        
+        .multas-armas tr:hover {
+            background-color: #e6f2ff;
+        }
+        
+        .multas-armas input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .multas-armas .total-row {
+            font-weight: bold;
+            background-color: #e6f2ff;
+        }
+        
+        .multas-armas .totales-cell {
+            text-align: right;
+            padding-right: 20px;
+        }
+        
+        .mensaje-maximo {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 3px;
+            display: none;
+        }
+        
+        .limite-alcanzado {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://i.imgur.com/jsSGxXl.png" alt="Título Código Penal" style="max-width: 100%; height: auto;">
+    </header>
+    
+    <div class="container">
+        <input type="text" id="searchInput" placeholder="Buscar artículo o cargos...">
+        
+        <div class="summary" id="resumen">
+            <h3><i class="fas fa-clipboard-list"></i> CARGOS SELECCIONADOS</h3>
+            <ul id="lista-cargos"></ul>
+            <p><strong>Total Minutos:</strong> <span id="total-min">0</span></p>
+            <p><strong>Fianza:</strong> <span id="estado-fianza">0</span></p>
+            <button id="limpiar-seleccion" style="margin-top: 10px; background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                Limpiar selección
+            </button>
+        </div>
+
+        <!-- Cargos Comunes -->
+        <div class="category">Cargos Comunes</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Desacato</td>
+                    <td>18 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Evasión a un agente de la ley</td>
+                    <td>24 min</td>
+                    <td>$5000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Porte de arma ilegal</td>
+                    <td>120 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Robo con arma de fuego</td>
+                    <td>96 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Intento de Homicidio</td>
+                    <td>36 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Porte de arma de fuego sin licencia</td>
+                    <td>36 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Homicidio</td>
+                    <td>192 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Obstrucción al Deber Público</td>
+                    <td>48 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Disparo con arma de fuego</td>
+                    <td>48 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Calculadora de Multas por Armas -->
+        <div class="calculadora-container">
+            <div class="calculadora-header">Calculadora de Multas por Armas</div>
+            <table class="multas-armas">
+                <thead>
+                    <tr>
+                        <th>TIPO DE ARMA</th>
+                        <th>BALAS</th>
+                        <th>MULTA POR BALA</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-tope="10000">
+                        <td>Colt45</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="5" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$5</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr data-tope="30000">
+                        <td>Deagle</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="15" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$15</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr data-tope="10000">
+                        <td>Escopetas</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="5" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$5</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr data-tope="30000">
+                        <td>Subfusil</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="15" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$15</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr data-tope="50000">
+                        <td>Fusil de Asalto</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="15" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$15</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr data-tope="50000">
+                        <td>Rifles</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="50" value="0">
+                            <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                        </td>
+                        <td>$50</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr>
+                        <td>Explosivos</td>
+                        <td>
+                            <input type="number" min="0" class="balas-input" data-multa="5000" value="0">
+                        </td>
+                        <td>$5,000</td>
+                        <td class="total-arma">$0</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3" class="totales-cell">TOTAL GENERAL:</td>
+                        <td id="total-general">$0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Delitos contra el Gobierno -->
+        <div class="category">Delitos contra el Gobierno</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Artículo 2</td>
+                    <td>Incitación de un disturbio</td>
+                    <td>12 min a 36 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 2.1</td>
+                    <td>Manifestación</td>
+                    <td>4 min a 10 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3</td>
+                    <td>Soborno</td>
+                    <td>24 min a 48 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 4</td>
+                    <td>Intimidación de testigos</td>
+                    <td>96 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 5</td>
+                    <td>Falsificación documentaria</td>
+                    <td>24 min a 96 minutos</td>
+                    <td>15000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 6</td>
+                    <td>Obstrucción del deber público</td>
+                    <td>48 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 7</td>
+                    <td>Uso indebido de la línea de emergencia</td>
+                    <td>4 min a 12 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 8</td>
+                    <td>Resistencia al arresto</td>
+                    <td>8 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 9</td>
+                    <td>Evadir a un agente de la ley</td>
+                    <td>24 minutos</td>
+                    <td>5000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 10</td>
+                    <td>Suplantación de identidad</td>
+                    <td>96 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 11</td>
+                    <td>Corrupción de la Oficina Pública</td>
+                    <td>24 min a 96 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 12</td>
+                    <td>Manipulación de evidencia</td>
+                    <td>96 min a 120 minutos</td>
+                    <td>35000</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 13</td>
+                    <td>Intimidación de testigos</td>
+                    <td>12 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 14</td>
+                    <td>Fraude</td>
+                    <td>de 16 min a 48 minutos</td>
+                    <td>30000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Delitos contra la Libertad Individual -->
+        <div class="category">Delitos contra la Libertad Individual</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Artículo 1</td>
+                    <td>Robo con arma blanca</td>
+                    <td>24 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 2</td>
+                    <td>Robo con arma de fuego</td>
+                    <td>96 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3</td>
+                    <td>Disparo con arma de fuego</td>
+                    <td>12 minutos a 48 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 4</td>
+                    <td>Intento de lesión</td>
+                    <td>12 minutos a 18 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 5</td>
+                    <td>Lesión</td>
+                    <td>24 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 6</td>
+                    <td>Intento de homicidio</td>
+                    <td>36 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 7</td>
+                    <td>Homicidio</td>
+                    <td>96 min a 192 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 7.1</td>
+                    <td>Múltiple homicidio</td>
+                    <td>192 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 8</td>
+                    <td>Amenazas</td>
+                    <td>N/A</td>
+                    <td>de $1,500 a $50,000</td>
+                    <td style="text-align: center;">N/A</td>
+                </tr>
+                <tr>
+                    <td>Artículo 9</td>
+                    <td>Secuestro</td>
+                    <td>144 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 10</td>
+                    <td>Extorsión</td>
+                    <td>de 96 a 192 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 11</td>
+                    <td>Crimen Organizado</td>
+                    <td>N/A</td>
+                    <td>5000</td>
+                    <td style="text-align: center;">N/A</td>
+                </tr>
+                <tr>
+                    <td>Artículo 12</td>
+                    <td>Falsificación o alteración de certificado</td>
+                    <td>28 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 13</td>
+                    <td>Estafa</td>
+                    <td>12 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 14</td>
+                    <td>Desacato</td>
+                    <td>6 min a 18 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 15</td>
+                    <td>Intento de hurto</td>
+                    <td>de 6 a 48 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 16</td>
+                    <td>Hurto</td>
+                    <td>de 12 a 120 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 17</td>
+                    <td>Escape de la custodia legal</td>
+                    <td>36 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Delitos contra la Propiedad -->
+        <div class="category">Delitos contra la Propiedad</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Artículo 1</td>
+                    <td>Vandalismo</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 2</td>
+                    <td>Realizar necesidades en espacios públicos</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3</td>
+                    <td>Ocupación indebida de espacios públicos</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 4</td>
+                    <td>Usurpación</td>
+                    <td>de 6 a 36 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 5</td>
+                    <td>Incendio</td>
+                    <td>24 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Delitos contra la Salud Pública -->
+        <div class="category">Delitos contra la Salud Pública</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Artículo 1</td>
+                    <td>Prostitución</td>
+                    <td>12 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 2</td>
+                    <td>Proxenetismo</td>
+                    <td>de 120 a 480 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">OBLIGATORIA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3</td>
+                    <td>Producción de sustancias ilícitas</td>
+                    <td>48 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 4</td>
+                    <td>Posesión de Cannabis</td>
+                    <td>de 12 a 36 minutos</td>
+                    <td>$500 x gramo</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 5</td>
+                    <td>Cultivo de Cannabis</td>
+                    <td>48 minutos</td>
+                    <td>$5,000 x planta</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 6</td>
+                    <td>Posesión de Cocaina</td>
+                    <td>de 24 a 120 minutos</td>
+                    <td>$750 x gramo</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 7</td>
+                    <td>Trafico ilícito de drogas</td>
+                    <td>96 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 8</td>
+                    <td>Abuso de alcohol o estupefacientes</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 9</td>
+                    <td>Solicitud abusiva con acoso o coacción</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 10</td>
+                    <td>Juegos de azar</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 11</td>
+                    <td>Participación en competencias vehiculares no autorizadas</td>
+                    <td>de 6 a 18 minutos</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 12</td>
+                    <td>Conducción de vehículos motorizados sin la autorización correspondiente</td>
+                    <td>12 minutos</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 13</td>
+                    <td>Conducción de vehículos motorizados con grave estado de embriaguez</td>
+                    <td>15 min (calabozo)</td>
+                    <td>5000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 14</td>
+                    <td>Conducción de vehículos motorizados al doble de la velocidad permitida</td>
+                    <td>15 min (calabozo)</td>
+                    <td>3000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 15</td>
+                    <td>Conducción de vehículos motorizados sin casco protector</td>
+                    <td>15 min (calabozo)</td>
+                    <td>500</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 16</td>
+                    <td>Participación en desorden público</td>
+                    <td>15 min (calabozo)</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Tenencia ilegal de Armas -->
+        <div class="category">Tenencia ilegal de Armas</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Fianza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Artículo 1</td>
+                    <td>Porte de Sable</td>
+                    <td>de 8 a 16 minutos</td>
+                    <td>2000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 2</td>
+                    <td>Tenencia de arma de fuego sin licencia</td>
+                    <td>36 minutos</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3</td>
+                    <td>Porte de arma de fuego ilegal</td>
+                    <td>de 48 a 120 min</td>
+                    <td>multa x cantidad</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.1</td>
+                    <td>Pistola con calibre 22mm o menor (Colt45)</td>
+                    <td>36 minutos</td>
+                    <td>$2500 ($5 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.2</td>
+                    <td>Pistola con calibre mayor a 22mm (Deagle)</td>
+                    <td>36 minutos</td>
+                    <td>$5000 ($15 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.3</td>
+                    <td>Escopeta recortada</td>
+                    <td>48 min a 120 minutos</td>
+                    <td>$15000 ($5 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.4</td>
+                    <td>Micro-uzi y Tec-9</td>
+                    <td>48 min a 120 minutos</td>
+                    <td>$5500 ($15 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.5</td>
+                    <td>AK-47</td>
+                    <td>48 min a 120 minutos</td>
+                    <td>$15000 ($15 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.6</td>
+                    <td>Rifles francotirador</td>
+                    <td>48 min a 120 minutos</td>
+                    <td>$30000 ($50 x bala)</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 3.7</td>
+                    <td>Explosivos</td>
+                    <td>48 min a 120 minutos</td>
+                    <td>$5000 x dispositivo</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 4</td>
+                    <td>Venta ilícita de armas de fuego o explosivos</td>
+                    <td>120 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 5</td>
+                    <td>Fabricación de armas de fuego ilícita</td>
+                    <td>de 48 a 120 min</td>
+                    <td>15000</td>
+                    <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
+                </tr>
+                <tr>
+                    <td>Artículo 6</td>
+                    <td>Compra ilícita de armas de fuego</td>
+                    <td>de 24 a 64 min</td>
+                    <td></td>
+                    <td style="text-align: center;"><span class="fianza-sin">SIN FIANZA</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <img src="https://i.imgur.com/lf4qXSX.png" class="lspd-badge" alt="LSPD Badge">
+    </div>
+
+    <!-- Modal para selección de minutos -->
+    <div id="minutosModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Seleccionar minutos</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="modalCargoDesc"></p>
+                <div class="rango-minutos" id="modalRangoMinutos"></div>
+                <input type="number" id="minutosInput" class="minutos-input" min="1" placeholder="Ingrese minutos">
+            </div>
+            <div class="modal-footer">
+                <button id="confirmarMinutos" class="btn-confirmar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variable global para almacenar los cargos seleccionados
+        let cargosSeleccionados = [];
+        const LIMITE_MINUTOS = 240;
+        const LIMITE_FIANZA = 960000;
+        let filaSeleccionada = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const tables = document.querySelectorAll('.penalTable');
+            const listaCargos = document.getElementById('lista-cargos');
+            const totalMin = document.getElementById('total-min');
+            const estadoFianza = document.getElementById('estado-fianza');
+            const categories = document.querySelectorAll('.category');
+            const modal = document.getElementById('minutosModal');
+            const closeBtn = document.querySelector('.close');
+            const confirmarBtn = document.getElementById('confirmarMinutos');
+            const minutosInput = document.getElementById('minutosInput');
+            const modalCargoDesc = document.getElementById('modalCargoDesc');
+            const modalRangoMinutos = document.getElementById('modalRangoMinutos');
+            
+            // Hacer las categorías desplegables
+            categories.forEach(category => {
+                category.addEventListener('click', function() {
+                    const table = this.nextElementSibling;
+                    this.classList.toggle('active');
+                    table.style.display = table.style.display === 'none' ? 'table' : 'none';
+                });
+                
+                // Ocultar todas las tablas al inicio excepto la primera
+                const table = category.nextElementSibling;
+                if (!category.textContent.includes('Cargos Comunes')) {
+                    table.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('limpiar-seleccion').addEventListener('click', function() {
+                cargosSeleccionados.forEach(cargo => {
+                    cargo.fila.classList.remove('selected');
+                });
+                cargosSeleccionados = [];
+                actualizarResumen();
+            });
+
+            // Función para extraer el rango de minutos de un texto
+            function extraerRangoMinutos(minutosStr) {
+                if (!minutosStr) return { min: 0, max: 0, esRango: false };
+                
+                const numeros = minutosStr.match(/\d+/g);
+                if (!numeros || numeros.length === 0) return { min: 0, max: 0, esRango: false };
+                
+                if (numeros.length === 1) {
+                    return { 
+                        min: parseInt(numeros[0]), 
+                        max: parseInt(numeros[0]), 
+                        esRango: false 
+                    };
+                } else {
+                    return { 
+                        min: parseInt(numeros[0]), 
+                        max: parseInt(numeros[1]), 
+                        esRango: true 
+                    };
+                }
+            }
+
+            function manejarSeleccion(fila) {
+                const index = cargosSeleccionados.findIndex(c => c.fila === fila);
+                
+                if (index > -1) {
+                    fila.classList.remove('selected');
+                    cargosSeleccionados.splice(index, 1);
+                    actualizarResumen();
+                } else {
+                    filaSeleccionada = fila;
+                    
+                    const celdas = fila.cells;
+                    let desc, minStr, fianza;
+                    
+                    if (celdas.length === 4) {
+                        desc = celdas[0].textContent;
+                        minStr = celdas[1].textContent;
+                        fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
+                    } else if (celdas.length === 5) {
+                        desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
+                        minStr = celdas[2].textContent;
+                        fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
+                    }
+                    
+                    const rangoMinutos = extraerRangoMinutos(minStr);
+                    
+                    // Si es un rango, mostrar el modal para seleccionar minutos
+                    if (rangoMinutos.esRango) {
+                        modalCargoDesc.textContent = desc;
+                        modalRangoMinutos.textContent = `Rango: ${rangoMinutos.min} a ${rangoMinutos.max} minutos`;
+                        minutosInput.min = rangoMinutos.min;
+                        minutosInput.max = rangoMinutos.max;
+                        minutosInput.value = rangoMinutos.min;
+                        modal.style.display = 'block';
+                    } else {
+                        // Si no es un rango, agregar directamente con el valor mínimo
+                        agregarCargoSeleccionado(fila, desc, rangoMinutos.min, fianza);
+                    }
+                }
+            }
+
+            function agregarCargoSeleccionado(fila, desc, minutos, fianza) {
+                fila.classList.add('selected');
+                
+                cargosSeleccionados.push({
+                    fila,
+                    desc,
+                    min: minutos,
+                    fianza
+                });
+                
+                actualizarResumen();
+            }
+
+            // Cerrar modal al hacer clic en la X
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                filaSeleccionada = null;
+            });
+
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    filaSeleccionada = null;
+                }
+            });
+
+            // Confirmar selección de minutos
+            confirmarBtn.addEventListener('click', function() {
+                const minutos = parseInt(minutosInput.value);
+                const min = parseInt(minutosInput.min);
+                const max = parseInt(minutosInput.max);
+                
+                if (isNaN(minutos) || minutos < min || minutos > max) {
+                    alert(`Por favor ingrese un valor entre ${min} y ${max}`);
+                    return;
+                }
+                
+                const celdas = filaSeleccionada.cells;
+                let desc, fianza;
+                
+                if (celdas.length === 4) {
+                    desc = celdas[0].textContent;
+                    fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
+                } else if (celdas.length === 5) {
+                    desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
+                    fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
+                }
+                
+                agregarCargoSeleccionado(filaSeleccionada, desc, minutos, fianza);
+                modal.style.display = 'none';
+                filaSeleccionada = null;
+            });
+
+            function actualizarResumen() {
+                listaCargos.innerHTML = '';
+                let total = 0;
+                let tieneSinFianza = false;
+                let tieneObligatoria = false;
+                let tieneOpcional = false;
+
+                cargosSeleccionados.forEach((cargo, index) => {
+                    const li = document.createElement('li');
+                    li.setAttribute('data-index', index);
+                    
+                    const span = document.createElement('span');
+                    span.textContent = `${cargo.desc} (${cargo.min} min)`;
+                    
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-eliminar';
+                    btn.textContent = 'X';
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        quitarCargo(index);
+                    });
+                    
+                    li.appendChild(span);
+                    li.appendChild(btn);
+                    listaCargos.appendChild(li);
+                    
+                    // Sumar minutos solo si no hemos alcanzado el límite
+                    if (total < LIMITE_MINUTOS) {
+                        total += cargo.min;
+                        // Asegurarnos de no pasar el límite
+                        if (total > LIMITE_MINUTOS) {
+                            total = LIMITE_MINUTOS;
+                        }
+                    }
+
+                    if (cargo.fianza.includes('SIN FIANZA')) {
+                        tieneSinFianza = true;
+                    } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
+                        tieneObligatoria = true;
+                    } else if (cargo.fianza.includes('OPCIONAL')) {
+                        tieneOpcional = true;
+                    }
+                });
+
+                // Aplicar límite de minutos
+                if (total > LIMITE_MINUTOS) {
+                    total = LIMITE_MINUTOS;
+                }
+
+                totalMin.textContent = total;
+                
+                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
+                if (total >= LIMITE_MINUTOS) {
+                    totalMin.classList.add('limite-alcanzado');
+                } else {
+                    totalMin.classList.remove('limite-alcanzado');
+                }
+
+                // Calcular fianza con límite
+                let fianzaCalculada = total * 4000;
+                if (fianzaCalculada > LIMITE_FIANZA) {
+                    fianzaCalculada = LIMITE_FIANZA;
+                }
+
+                if (tieneSinFianza) {
+                    estadoFianza.innerHTML = `<span class="fianza-sin">SIN FIANZA</span>`;
+                } else if (tieneObligatoria) {
+                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OBLIGATORIA</span>`;
+                } else if (tieneOpcional) {
+                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OPCIONAL</span>`;
+                } else {
+                    estadoFianza.innerHTML = `$0`;
+                }
+
+                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
+                if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
+                    const spanFianza = estadoFianza.querySelector('span');
+                    if (spanFianza) {
+                        spanFianza.classList.add('limite-alcanzado');
+                    }
+                }
+            }
+
+            // Asignar eventos a las filas
+            tables.forEach(table => {
+                const filas = table.querySelectorAll('tbody tr');
+                filas.forEach(fila => {
+                    fila.addEventListener('click', () => manejarSeleccion(fila));
+                });
+            });
+
+            // Búsqueda mejorada
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase().trim();
+                
+                if (filter === '') {
+                    tables.forEach(table => {
+                        const filas = table.querySelectorAll('tbody tr');
+                        filas.forEach(fila => {
+                            fila.style.display = '';
+                        });
+                        table.style.display = '';
+                        table.previousElementSibling.style.display = '';
+                    });
+                    return;
+                }
+                
+                tables.forEach(table => {
+                    table.style.display = 'none';
+                    table.previousElementSibling.style.display = 'none';
+                });
+                
+                tables.forEach(table => {
+                    const filas = table.querySelectorAll('tbody tr');
+                    let encontrado = false;
+                    
+                    filas.forEach(fila => {
+                        const text = fila.textContent.toLowerCase();
+                        if (text.includes(filter)) {
+                            encontrado = true;
+                            fila.style.display = '';
+                            table.style.display = '';
+                            table.previousElementSibling.style.display = '';
+                            
+                            filas.forEach(f => {
+                                if (f !== fila) {
+                                    f.style.display = 'none';
+                                }
+                            });
+                        } else {
+                            fila.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Controlador del despliegue de la calculadora
+            const calculadoraHeader = document.querySelector('.calculadora-header');
+            const multasArmasTable = document.querySelector('.multas-armas');
+            
+            calculadoraHeader.addEventListener('click', function() {
+                this.classList.toggle('active');
+                multasArmasTable.classList.toggle('active');
+            });
+            
+            // Calculadora de multas por armas
+            const balasInputs = document.querySelectorAll('.balas-input');
+            
+            balasInputs.forEach(input => {
+                input.addEventListener('input', calcularMultas);
+            });
+            
+            function calcularMultas() {
+                let totalGeneral = 0;
+                
+                balasInputs.forEach(input => {
+                    const row = input.closest('tr');
+                    const tope = row.dataset.tope ? parseInt(row.dataset.tope) : null;
+                    const mensajeMaximo = row.querySelector('.mensaje-maximo');
+                    
+                    let cantidad = parseInt(input.value) || 0;
+                    const multaPorBala = parseInt(input.dataset.multa);
+                    let total = cantidad * multaPorBala;
+                    
+                    // Aplicar tope si existe (excepto para Explosivos)
+                    if (tope !== null && total > tope) {
+                        total = tope;
+                        cantidad = Math.floor(tope / multaPorBala);
+                        input.value = cantidad;
+                        
+                        // Mostrar mensaje de máximo alcanzado
+                        if (mensajeMaximo) {
+                            mensajeMaximo.style.display = 'block';
+                            row.querySelector('.total-arma').classList.add('limite-alcanzado');
+                        }
+                    } else {
+                        // Ocultar mensaje si no se alcanzó el tope
+                        if (mensajeMaximo) {
+                            mensajeMaximo.style.display = 'none';
+                            row.querySelector('.total-arma').classList.remove('limite-alcanzado');
+                        }
+                    }
+                    
+                    // Actualizar el total de esta arma
+                    const totalArmaCell = row.querySelector('.total-arma');
+                    totalArmaCell.textContent = `$${total.toLocaleString()}`;
+                    
+                    // Sumar al total general
+                    totalGeneral += total;
+                });
+                
+                // Actualizar el total general
+                document.getElementById('total-general').textContent = `$${totalGeneral.toLocaleString()}`;
+            }
+        });
+
+        function quitarCargo(index) {
+            if (cargosSeleccionados[index]) {
+                // Remover la clase selected de la fila
+                cargosSeleccionados[index].fila.classList.remove('selected');
+                
+                // Eliminar el cargo del array
+                cargosSeleccionados.splice(index, 1);
+                
+                // Actualizar el resumen
+                const listaCargos = document.getElementById('lista-cargos');
+                const totalMin = document.getElementById('total-min');
+                const estadoFianza = document.getElementById('estado-fianza');
+                
+                listaCargos.innerHTML = '';
+                let total = 0;
+                let tieneSinFianza = false;
+                let tieneObligatoria = false;
+                let tieneOpcional = false;
+
+                cargosSeleccionados.forEach((cargo, i) => {
+                    const li = document.createElement('li');
+                    li.setAttribute('data-index', i);
+                    
+                    const span = document.createElement('span');
+                    span.textContent = `${cargo.desc} (${cargo.min} min)`;
+                    
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-eliminar';
+                    btn.textContent = 'X';
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        quitarCargo(i);
+                    });
+                    
+                    li.appendChild(span);
+                    li.appendChild(btn);
+                    listaCargos.appendChild(li);
+                    
+                    // Sumar minutos solo si no hemos alcanzado el límite
+                    if (total < LIMITE_MINUTOS) {
+                        total += cargo.min;
+                        // Asegurarnos de no pasar el límite
+                        if (total > LIMITE_MINUTOS) {
+                            total = LIMITE_MINUTOS;
+                        }
+                    }
+
+                    if (cargo.fianza.includes('SIN FIANZA')) {
+                        tieneSinFianza = true;
+                    } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
+                        tieneObligatoria = true;
+                    } else if (cargo.fianza.includes('OPCIONAL')) {
+                        tieneOpcional = true;
+                    }
+                });
+
+                // Aplicar límite de minutos
+                if (total > LIMITE_MINUTOS) {
+                    total = LIMITE_MINUTOS;
+                }
+
+                totalMin.textContent = total;
+                
+                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
+                if (total >= LIMITE_MINUTOS) {
+                    totalMin.classList.add('limite-alcanzado');
+                } else {
+                    totalMin.classList.remove('limite-alcanzado');
+                }
+
+                // Calcular fianza con límite
+                let fianzaCalculada = total * 4000;
+                if (fianzaCalculada > LIMITE_FIANZA) {
+                    fianzaCalculada = LIMITE_FIANZA;
+                }
+
+                if (tieneSinFianza) {
+                    estadoFianza.innerHTML = `<span class="fianza-sin">SIN FIANZA</span>`;
+                } else if (tieneObligatoria) {
+                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OBLIGATORIA</span>`;
+                } else if (tieneOpcional) {
+                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OPCIONAL</span>`;
+                } else {
+                    estadoFianza.innerHTML = `$0`;
+                }
+
+                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
+                if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
+                    const spanFianza = estadoFianza.querySelector('span');
+                    if (spanFianza) {
+                        spanFianza.classList.add('limite-alcanzado');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
