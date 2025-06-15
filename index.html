@@ -421,8 +421,8 @@
         </table>
 
         <!-- Calculadora de Multas por Armas -->
-        <div class="category">Calculadora de Multas por Armas</div>
-        <table class="multas-armas">
+        <div class="category calculadora-multas-category">Calculadora de Multas por Armas</div>
+        <table class="multas-armas calculadora-multas">
             <thead>
                 <tr>
                     <th>TIPO DE ARMA</th>
@@ -1064,12 +1064,18 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Variable global para almacenar los cargos seleccionados
         let cargosSeleccionados = [];
         const LIMITE_MINUTOS = 240;
         const LIMITE_FIANZA = 960000;
         let filaSeleccionada = null;
+
+        // Extensión de jQuery para seleccionar por texto
+        jQuery.expr[':'].contains = function(a, i, m) {
+          return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
@@ -1319,44 +1325,65 @@
             searchInput.addEventListener('input', function() {
                 const filter = searchInput.value.toLowerCase().trim();
                 
+                // Ocultar siempre la calculadora de multas durante la búsqueda
+                const calculadoraMultas = document.querySelector('.calculadora-multas');
+                const calculadoraCategory = document.querySelector('.calculadora-multas-category');
+                
+                if (calculadoraMultas && calculadoraCategory) {
+                    calculadoraMultas.style.display = 'none';
+                    calculadoraCategory.style.display = 'none';
+                }
+                
                 if (filter === '') {
+                    // Mostrar todas las tablas excepto la calculadora de multas (que se maneja con su categoría)
                     tables.forEach(table => {
-                        const filas = table.querySelectorAll('tbody tr');
-                        filas.forEach(fila => {
-                            fila.style.display = '';
-                        });
-                        table.style.display = '';
-                        table.previousElementSibling.style.display = '';
+                        if (!table.classList.contains('calculadora-multas')) {
+                            const filas = table.querySelectorAll('tbody tr');
+                            filas.forEach(fila => {
+                                fila.style.display = '';
+                            });
+                            table.style.display = '';
+                            table.previousElementSibling.style.display = '';
+                        }
                     });
+                    
+                    // Mostrar la categoría de la calculadora (pero no la tabla a menos que se haga clic)
+                    if (calculadoraCategory) {
+                        calculadoraCategory.style.display = 'flex';
+                    }
                     return;
                 }
                 
+                // Ocultar todas las tablas primero
                 tables.forEach(table => {
-                    table.style.display = 'none';
-                    table.previousElementSibling.style.display = 'none';
+                    if (!table.classList.contains('calculadora-multas')) {
+                        table.style.display = 'none';
+                        table.previousElementSibling.style.display = 'none';
+                    }
                 });
                 
+                // Buscar en todas las tablas excepto la calculadora de multas
                 tables.forEach(table => {
-                    const filas = table.querySelectorAll('tbody tr');
-                    let encontrado = false;
-                    
-                    filas.forEach(fila => {
-                        const text = fila.textContent.toLowerCase();
-                        if (text.includes(filter)) {
-                            encontrado = true;
-                            fila.style.display = '';
-                            table.style.display = '';
-                            table.previousElementSibling.style.display = '';
-                            
-                            filas.forEach(f => {
-                                if (f !== fila) {
-                                    f.style.display = 'none';
-                                }
-                            });
-                        } else {
-                            fila.style.display = 'none';
+                    if (!table.classList.contains('calculadora-multas')) {
+                        const filas = table.querySelectorAll('tbody tr');
+                        let encontrado = false;
+                        
+                        filas.forEach(fila => {
+                            const text = fila.textContent.toLowerCase();
+                            if (text.includes(filter)) {
+                                encontrado = true;
+                                fila.style.display = '';
+                            } else {
+                                fila.style.display = 'none';
+                            }
+                        });
+                        
+                        // Si se encontraron resultados, mostrar la tabla y su categoría
+                        if (encontrado) {
+                            table.style.display = 'table';
+                            table.previousElementSibling.style.display = 'flex';
                         }
-                    });
+                    }
                 });
             });
 
