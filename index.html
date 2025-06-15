@@ -6,7 +6,7 @@
     <title>Department of Justice</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: "Eurostile Bold Extended", sans-serif;
             background-color: #f0f0f0;
             color: #333;
             margin: 0;
@@ -136,6 +136,14 @@
             font-weight: bold;
             font-size: 0.9em;
         }
+        .fianza-limite { 
+            background-color: #e74c3c; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
         .selected { 
             background-color: #d4e6ff !important; 
             border-left: 4px solid #00274d;
@@ -169,6 +177,10 @@
             font-weight: bold;
             color: #00274d;
         }
+        .valor-monetario {
+            font-weight: bold;
+            color: #00274d;
+        }
         .lspd-badge {
             width: 80px;
             height: 80px;
@@ -192,6 +204,7 @@
         }
         .limite-alcanzado {
             font-weight: bold;
+            color: #e74c3c;
         }
         
         /* Estilos para el modal de selección de minutos */
@@ -327,9 +340,11 @@
             display: none;
         }
         
-        .limite-alcanzado {
-            color: #e74c3c;
+        .limite-mensaje {
+            display: none;
             font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 3px;
         }
     </style>
 </head>
@@ -346,6 +361,10 @@
             <ul id="lista-cargos"></ul>
             <p><strong>Total Minutos:</strong> <span id="total-min">0</span></p>
             <p><strong>Fianza:</strong> <span id="estado-fianza">0</span></p>
+            <p><strong>Multas:</strong> <span id="total-multas" class="valor-monetario">$0</span> <span id="limite-multas-mensaje" class="fianza-limite" style="display: none;">LÍMITE ALCANZADO</span></p>
+            <p id="excedente-container" style="display: none;"><strong>Excedente (/multar):</strong> <span id="excedente-multas" class="valor-monetario">$0</span></p>
+            <p><strong>Multas por balas:</strong> <span id="total-balas" class="valor-monetario">$0</span></p>
+            <p><strong>Total por multar:</strong> <span id="total-por-multar" class="valor-monetario">$0</span></p>
             <button id="limpiar-seleccion" style="margin-top: 10px; background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
                 Limpiar selección
             </button>
@@ -1070,7 +1089,9 @@
         let cargosSeleccionados = [];
         const LIMITE_MINUTOS = 240;
         const LIMITE_FIANZA = 960000;
+        const LIMITE_MULTAS = 10000;
         let filaSeleccionada = null;
+        let totalBalas = 0;
 
         // Extensión de jQuery para seleccionar por texto
         jQuery.expr[':'].contains = function(a, i, m) {
@@ -1083,6 +1104,12 @@
             const listaCargos = document.getElementById('lista-cargos');
             const totalMin = document.getElementById('total-min');
             const estadoFianza = document.getElementById('estado-fianza');
+            const totalMultas = document.getElementById('total-multas');
+            const totalBalasElement = document.getElementById('total-balas');
+            const totalPorMultar = document.getElementById('total-por-multar');
+            const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
+            const excedenteContainer = document.getElementById('excedente-container');
+            const excedenteMultas = document.getElementById('excedente-multas');
             const categories = document.querySelectorAll('.category');
             const modal = document.getElementById('minutosModal');
             const closeBtn = document.querySelector('.close');
@@ -1111,6 +1138,7 @@
                     cargo.fila.classList.remove('selected');
                 });
                 cargosSeleccionados = [];
+                totalBalas = 0;
                 actualizarResumen();
             });
 
@@ -1136,6 +1164,18 @@
                 }
             }
 
+            // Función para extraer el valor de la multa de un texto
+            function extraerMulta(multaStr) {
+                if (!multaStr) return 0;
+                
+                // Extraer números con o sin separadores de miles
+                const numeros = multaStr.match(/\d+/g);
+                if (!numeros || numeros.length === 0) return 0;
+                
+                // Tomar el primer número encontrado
+                return parseInt(numeros[0].replace(/\D/g, ''));
+            }
+
             function manejarSeleccion(fila) {
                 const index = cargosSeleccionados.findIndex(c => c.fila === fila);
                 
@@ -1147,19 +1187,22 @@
                     filaSeleccionada = fila;
                     
                     const celdas = fila.cells;
-                    let desc, minStr, fianza;
+                    let desc, minStr, multaStr, fianza;
                     
                     if (celdas.length === 4) {
                         desc = celdas[0].textContent;
                         minStr = celdas[1].textContent;
+                        multaStr = celdas[2].textContent;
                         fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
                     } else if (celdas.length === 5) {
                         desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
                         minStr = celdas[2].textContent;
+                        multaStr = celdas[3].textContent;
                         fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
                     }
                     
                     const rangoMinutos = extraerRangoMinutos(minStr);
+                    const multa = extraerMulta(multaStr);
                     
                     // Si es un rango, mostrar el modal para seleccionar minutos
                     if (rangoMinutos.esRango) {
@@ -1171,18 +1214,19 @@
                         modal.style.display = 'block';
                     } else {
                         // Si no es un rango, agregar directamente con el valor mínimo
-                        agregarCargoSeleccionado(fila, desc, rangoMinutos.min, fianza);
+                        agregarCargoSeleccionado(fila, desc, rangoMinutos.min, multa, fianza);
                     }
                 }
             }
 
-            function agregarCargoSeleccionado(fila, desc, minutos, fianza) {
+            function agregarCargoSeleccionado(fila, desc, minutos, multa, fianza) {
                 fila.classList.add('selected');
                 
                 cargosSeleccionados.push({
                     fila,
                     desc,
                     min: minutos,
+                    multa: multa || 0,
                     fianza
                 });
                 
@@ -1215,17 +1259,20 @@
                 }
                 
                 const celdas = filaSeleccionada.cells;
-                let desc, fianza;
+                let desc, multaStr, fianza;
                 
                 if (celdas.length === 4) {
                     desc = celdas[0].textContent;
+                    multaStr = celdas[2].textContent;
                     fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
                 } else if (celdas.length === 5) {
                     desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
+                    multaStr = celdas[3].textContent;
                     fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
                 }
                 
-                agregarCargoSeleccionado(filaSeleccionada, desc, minutos, fianza);
+                const multa = extraerMulta(multaStr);
+                agregarCargoSeleccionado(filaSeleccionada, desc, minutos, multa, fianza);
                 modal.style.display = 'none';
                 filaSeleccionada = null;
             });
@@ -1233,6 +1280,7 @@
             function actualizarResumen() {
                 listaCargos.innerHTML = '';
                 let total = 0;
+                let totalMultasFijas = 0;
                 let tieneSinFianza = false;
                 let tieneObligatoria = false;
                 let tieneOpcional = false;
@@ -1265,6 +1313,9 @@
                         }
                     }
 
+                    // Sumar multas fijas
+                    totalMultasFijas += cargo.multa;
+
                     if (cargo.fianza.includes('SIN FIANZA')) {
                         tieneSinFianza = true;
                     } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
@@ -1281,12 +1332,41 @@
 
                 totalMin.textContent = total;
                 
-                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
+                // Verificar si se alcanzó el límite de minutos
                 if (total >= LIMITE_MINUTOS) {
                     totalMin.classList.add('limite-alcanzado');
                 } else {
                     totalMin.classList.remove('limite-alcanzado');
                 }
+
+                // Calcular multas fijas y excedente
+                let multasDentroLimite = totalMultasFijas;
+                let excedente = 0;
+                
+                if (totalMultasFijas > LIMITE_MULTAS) {
+                    multasDentroLimite = LIMITE_MULTAS;
+                    excedente = totalMultasFijas - LIMITE_MULTAS;
+                    limiteMultasMensaje.style.display = 'inline';
+                } else {
+                    limiteMultasMensaje.style.display = 'none';
+                }
+
+                totalMultas.textContent = `$${multasDentroLimite.toLocaleString()}`;
+                
+                // Mostrar u ocultar el excedente según sea necesario
+                if (excedente > 0) {
+                    excedenteContainer.style.display = 'block';
+                    excedenteMultas.textContent = `$${excedente.toLocaleString()}`;
+                } else {
+                    excedenteContainer.style.display = 'none';
+                }
+
+                // Actualizar total de multas por balas
+                totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
+
+                // Calcular total por multar (excedente + multas por balas)
+                const totalPorMultarValor = excedente + totalBalas;
+                totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
                 let fianzaCalculada = total * 4000;
@@ -1304,7 +1384,7 @@
                     estadoFianza.innerHTML = `$0`;
                 }
 
-                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
+                // Verificar si se alcanzó el límite de fianza
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
                     const spanFianza = estadoFianza.querySelector('span');
                     if (spanFianza) {
@@ -1435,6 +1515,8 @@
                 
                 // Actualizar el total general
                 document.getElementById('total-general').textContent = `$${totalGeneral.toLocaleString()}`;
+                totalBalas = totalGeneral;
+                actualizarResumen();
             }
         });
 
@@ -1450,9 +1532,16 @@
                 const listaCargos = document.getElementById('lista-cargos');
                 const totalMin = document.getElementById('total-min');
                 const estadoFianza = document.getElementById('estado-fianza');
+                const totalMultas = document.getElementById('total-multas');
+                const totalBalasElement = document.getElementById('total-balas');
+                const totalPorMultar = document.getElementById('total-por-multar');
+                const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
+                const excedenteContainer = document.getElementById('excedente-container');
+                const excedenteMultas = document.getElementById('excedente-multas');
                 
                 listaCargos.innerHTML = '';
                 let total = 0;
+                let totalMultasFijas = 0;
                 let tieneSinFianza = false;
                 let tieneObligatoria = false;
                 let tieneOpcional = false;
@@ -1485,6 +1574,9 @@
                         }
                     }
 
+                    // Sumar multas fijas
+                    totalMultasFijas += cargo.multa;
+
                     if (cargo.fianza.includes('SIN FIANZA')) {
                         tieneSinFianza = true;
                     } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
@@ -1501,12 +1593,41 @@
 
                 totalMin.textContent = total;
                 
-                // Verificar si se alcanzó el límite de minutos (solo bold, sin color rojo)
+                // Verificar si se alcanzó el límite de minutos
                 if (total >= LIMITE_MINUTOS) {
                     totalMin.classList.add('limite-alcanzado');
                 } else {
                     totalMin.classList.remove('limite-alcanzado');
                 }
+
+                // Calcular multas fijas y excedente
+                let multasDentroLimite = totalMultasFijas;
+                let excedente = 0;
+                
+                if (totalMultasFijas > LIMITE_MULTAS) {
+                    multasDentroLimite = LIMITE_MULTAS;
+                    excedente = totalMultasFijas - LIMITE_MULTAS;
+                    limiteMultasMensaje.style.display = 'inline';
+                } else {
+                    limiteMultasMensaje.style.display = 'none';
+                }
+
+                totalMultas.textContent = `$${multasDentroLimite.toLocaleString()}`;
+                
+                // Mostrar u ocultar el excedente según sea necesario
+                if (excedente > 0) {
+                    excedenteContainer.style.display = 'block';
+                    excedenteMultas.textContent = `$${excedente.toLocaleString()}`;
+                } else {
+                    excedenteContainer.style.display = 'none';
+                }
+
+                // Actualizar total de multas por balas
+                totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
+
+                // Calcular total por multar (excedente + multas por balas)
+                const totalPorMultarValor = excedente + totalBalas;
+                totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
                 let fianzaCalculada = total * 4000;
@@ -1524,7 +1645,7 @@
                     estadoFianza.innerHTML = `$0`;
                 }
 
-                // Verificar si se alcanzó el límite de fianza (solo bold, sin color rojo)
+                // Verificar si se alcanzó el límite de fianza
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
                     const spanFianza = estadoFianza.querySelector('span');
                     if (spanFianza) {
