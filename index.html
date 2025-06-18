@@ -346,6 +346,26 @@
             font-size: 0.9em;
             margin-top: 3px;
         }
+        
+        /* Nuevos estilos para Clase de Delito */
+        .delito-falta {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .delito-delito {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
     </style>
 </head>
 <body>
@@ -362,12 +382,17 @@
             <p><strong>Total Minutos:</strong> <span id="total-min">0</span></p>
             <p><strong>Fianza:</strong> <span id="estado-fianza">0</span></p>
             <p><strong>Multas:</strong> <span id="total-multas" class="valor-monetario">$0</span> <span id="limite-multas-mensaje" class="fianza-limite" style="display: none;">LÍMITE ALCANZADO</span></p>
-            <p id="excedente-container" style="display: none;"><strong>Excedente (/multar):</strong> <span id="excedente-multas" class="valor-monetario">$0</span></p>
+            <p id="Resto-container" style="display: none;"><strong>Resto (/multar):</strong> <span id="Resto-multas" class="valor-monetario">$0</span></p>
             <p><strong>Multas por balas:</strong> <span id="total-balas" class="valor-monetario">$0</span></p>
             <p><strong>Total por multar:</strong> <span id="total-por-multar" class="valor-monetario">$0</span></p>
-            <button id="limpiar-seleccion" style="margin-top: 10px; background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                Limpiar selección
-            </button>
+            <div style="margin-top: 15px;">
+                <button id="limpiar-seleccion" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-right: 10px;">
+                    Limpiar selección
+                </button>
+                <button id="copiar-nombres" style="background-color: #00274d; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    Copiar cargos
+                </button>
+            </div>
         </div>
 
         <!-- Cargos Comunes -->
@@ -395,7 +420,7 @@
                     <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
                 </tr>
                 <tr>
-                    <td>Porte de arma ilegal</td>
+                    <td>Porte de arma de fuego ilegal</td>
                     <td>120 min</td>
                     <td></td>
                     <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
@@ -1062,6 +1087,162 @@
             </tbody>
         </table>
 
+        <!-- Tránsito y Seguridad Vial -->
+        <div class="category">Tránsito y Seguridad Vial</div>
+        <table class="penalTable">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>Cargos</th>
+                    <th>Minutos</th>
+                    <th>Multa</th>
+                    <th>Clase de Delito</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Art. 1</td>
+                    <td>No usar elementos de seguridad</td>
+                    <td>N/A</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 2</td>
+                    <td>Escapar del lugar del incidente</td>
+                    <td>15 min</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 3</td>
+                    <td>Conducción temeraria</td>
+                    <td>12 a 24 min</td>
+                    <td>5000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 4</td>
+                    <td>Sobrepasar el límite de seguridad</td>
+                    <td>N/A</td>
+                    <td>2500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 5</td>
+                    <td>Ignorar los dispositivos de tráfico</td>
+                    <td>N/A</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 6</td>
+                    <td>Estacionamiento indebido</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 7</td>
+                    <td>Negligencia al volante</td>
+                    <td>N/A</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 8</td>
+                    <td>Uso ilegal de Oxido Nitroso</td>
+                    <td>N/A</td>
+                    <td>2500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 9</td>
+                    <td>Violación del registro del vehículo [No llevar patente/matrícula]</td>
+                    <td>15 min</td>
+                    <td>10000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 10</td>
+                    <td>Conducir bajo los efectos del Alcohol o Drogas</td>
+                    <td>15 min</td>
+                    <td>5000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 11</td>
+                    <td>Carrera de vehículos</td>
+                    <td>6 a 18 min</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 12</td>
+                    <td>Conducción sin licencia/suspendida</td>
+                    <td>6 min</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 13</td>
+                    <td>Conducción al doble de la velocidad permitida</td>
+                    <td>15 min</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 14</td>
+                    <td>Conducción de vehículos sin casco protector</td>
+                    <td>15 min</td>
+                    <td>500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 15</td>
+                    <td>Fraude del registro vehículo</td>
+                    <td>12 min</td>
+                    <td>10000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 16</td>
+                    <td>Conducir un vehículo aéreo sin licencia</td>
+                    <td>24 min</td>
+                    <td>25000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 17</td>
+                    <td>Conducción temeraria con un vehículo aéreo</td>
+                    <td>48 min</td>
+                    <td>50000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 18</td>
+                    <td>Rechazar órdenes de ATC (Controlador Aéreo)</td>
+                    <td>12 min</td>
+                    <td>100000</td>
+                    <td style="text-align: center;"><span class="delito-delito">DELITO</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 19</td>
+                    <td>Conducir una Embarcación sin Licencia</td>
+                    <td>N/A</td>
+                    <td>1500</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+                <tr>
+                    <td>Art. 20</td>
+                    <td>Pescar sin una Licencia Reglamentaria</td>
+                    <td>N/A</td>
+                    <td>1000</td>
+                    <td style="text-align: center;"><span class="delito-falta">FALTA</span></td>
+                </tr>
+            </tbody>
+        </table>
+
         <img src="https://i.imgur.com/lf4qXSX.png" class="lspd-badge" alt="LSPD Badge">
     </div>
 
@@ -1108,8 +1289,8 @@
             const totalBalasElement = document.getElementById('total-balas');
             const totalPorMultar = document.getElementById('total-por-multar');
             const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
-            const excedenteContainer = document.getElementById('excedente-container');
-            const excedenteMultas = document.getElementById('excedente-multas');
+            const RestoContainer = document.getElementById('Resto-container');
+            const RestoMultas = document.getElementById('Resto-multas');
             const categories = document.querySelectorAll('.category');
             const modal = document.getElementById('minutosModal');
             const closeBtn = document.querySelector('.close');
@@ -1117,6 +1298,7 @@
             const minutosInput = document.getElementById('minutosInput');
             const modalCargoDesc = document.getElementById('modalCargoDesc');
             const modalRangoMinutos = document.getElementById('modalRangoMinutos');
+            const copiarNombresBtn = document.getElementById('copiar-nombres');
             
             // Hacer las categorías desplegables
             categories.forEach(category => {
@@ -1140,6 +1322,22 @@
                 cargosSeleccionados = [];
                 totalBalas = 0;
                 actualizarResumen();
+            });
+
+            // Función para copiar nombres de cargos
+            copiarNombresBtn.addEventListener('click', function() {
+                const nombres = cargosSeleccionados.map(cargo => {
+                    // Extraer solo el nombre del cargo (eliminar el artículo si existe)
+                    const desc = cargo.desc.split(' - ').pop();
+                    return desc;
+                }).join(', ');
+                
+                navigator.clipboard.writeText(nombres).then(() => {
+                    alert('Nombres de cargos copiados al portapapeles');
+                }).catch(err => {
+                    console.error('Error al copiar: ', err);
+                    alert('Error al copiar los nombres de los cargos');
+                });
             });
 
             // Función para extraer el rango de minutos de un texto
@@ -1320,7 +1518,7 @@
                         tieneSinFianza = true;
                     } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
                         tieneObligatoria = true;
-                    } else if (cargo.fianza.includes('OPCIONAL')) {
+                    } else if (cargo.fianza.includes('OPCIONAL') || cargo.fianza.includes('SÍ')) {
                         tieneOpcional = true;
                     }
                 });
@@ -1339,13 +1537,13 @@
                     totalMin.classList.remove('limite-alcanzado');
                 }
 
-                // Calcular multas fijas y excedente
+                // Calcular multas fijas y Resto
                 let multasDentroLimite = totalMultasFijas;
-                let excedente = 0;
+                let Resto = 0;
                 
                 if (totalMultasFijas > LIMITE_MULTAS) {
                     multasDentroLimite = LIMITE_MULTAS;
-                    excedente = totalMultasFijas - LIMITE_MULTAS;
+                    Resto = totalMultasFijas - LIMITE_MULTAS;
                     limiteMultasMensaje.style.display = 'inline';
                 } else {
                     limiteMultasMensaje.style.display = 'none';
@@ -1353,19 +1551,19 @@
 
                 totalMultas.textContent = `$${multasDentroLimite.toLocaleString()}`;
                 
-                // Mostrar u ocultar el excedente según sea necesario
-                if (excedente > 0) {
-                    excedenteContainer.style.display = 'block';
-                    excedenteMultas.textContent = `$${excedente.toLocaleString()}`;
+                // Mostrar u ocultar el Resto según sea necesario
+                if (Resto > 0) {
+                    RestoContainer.style.display = 'block';
+                    RestoMultas.textContent = `$${Resto.toLocaleString()}`;
                 } else {
-                    excedenteContainer.style.display = 'none';
+                    RestoContainer.style.display = 'none';
                 }
 
                 // Actualizar total de multas por balas
                 totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
 
-                // Calcular total por multar (excedente + multas por balas)
-                const totalPorMultarValor = excedente + totalBalas;
+                // Calcular total por multar (Resto + multas por balas)
+                const totalPorMultarValor = Resto + totalBalas;
                 totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
@@ -1386,11 +1584,17 @@
 
                 // Verificar si se alcanzó el límite de fianza
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
-                    const spanFianza = estadoFianza.querySelector('span');
-                    if (spanFianza) {
-                        spanFianza.classList.add('limite-alcanzado');
-                    }
-                }
+    const spanFianza = estadoFianza.querySelector('span');
+    if (spanFianza) {
+        spanFianza.classList.remove('fianza-limite', 'fianza-opcional', 'fianza-obligatoria', 'fianza-sin');
+
+        if (tieneObligatoria) {
+            spanFianza.classList.add('fianza-obligatoria');
+        } else if (tieneOpcional) {
+            spanFianza.classList.add('fianza-opcional');
+        }
+    }
+}
             }
 
             // Asignar eventos a las filas
@@ -1536,8 +1740,8 @@
                 const totalBalasElement = document.getElementById('total-balas');
                 const totalPorMultar = document.getElementById('total-por-multar');
                 const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
-                const excedenteContainer = document.getElementById('excedente-container');
-                const excedenteMultas = document.getElementById('excedente-multas');
+                const RestoContainer = document.getElementById('Resto-container');
+                const RestoMultas = document.getElementById('Resto-multas');
                 
                 listaCargos.innerHTML = '';
                 let total = 0;
@@ -1581,7 +1785,7 @@
                         tieneSinFianza = true;
                     } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
                         tieneObligatoria = true;
-                    } else if (cargo.fianza.includes('OPCIONAL')) {
+                    } else if (cargo.fianza.includes('OPCIONAL') || cargo.fianza.includes('SÍ')) {
                         tieneOpcional = true;
                     }
                 });
@@ -1600,13 +1804,13 @@
                     totalMin.classList.remove('limite-alcanzado');
                 }
 
-                // Calcular multas fijas y excedente
+                // Calcular multas fijas y Resto
                 let multasDentroLimite = totalMultasFijas;
-                let excedente = 0;
+                let Resto = 0;
                 
                 if (totalMultasFijas > LIMITE_MULTAS) {
                     multasDentroLimite = LIMITE_MULTAS;
-                    excedente = totalMultasFijas - LIMITE_MULTAS;
+                    Resto = totalMultasFijas - LIMITE_MULTAS;
                     limiteMultasMensaje.style.display = 'inline';
                 } else {
                     limiteMultasMensaje.style.display = 'none';
@@ -1614,19 +1818,19 @@
 
                 totalMultas.textContent = `$${multasDentroLimite.toLocaleString()}`;
                 
-                // Mostrar u ocultar el excedente según sea necesario
-                if (excedente > 0) {
-                    excedenteContainer.style.display = 'block';
-                    excedenteMultas.textContent = `$${excedente.toLocaleString()}`;
+                // Mostrar u ocultar el Resto según sea necesario
+                if (Resto > 0) {
+                    RestoContainer.style.display = 'block';
+                    RestoMultas.textContent = `$${Resto.toLocaleString()}`;
                 } else {
-                    excedenteContainer.style.display = 'none';
+                    RestoContainer.style.display = 'none';
                 }
 
                 // Actualizar total de multas por balas
                 totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
 
-                // Calcular total por multar (excedente + multas por balas)
-                const totalPorMultarValor = excedente + totalBalas;
+                // Calcular total por multar (Resto + multas por balas)
+                const totalPorMultarValor = Resto + totalBalas;
                 totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
@@ -1647,11 +1851,17 @@
 
                 // Verificar si se alcanzó el límite de fianza
                 if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
-                    const spanFianza = estadoFianza.querySelector('span');
-                    if (spanFianza) {
-                        spanFianza.classList.add('limite-alcanzado');
-                    }
-                }
+    const spanFianza = estadoFianza.querySelector('span');
+    if (spanFianza) {
+        spanFianza.classList.remove('fianza-limite', 'fianza-opcional', 'fianza-obligatoria', 'fianza-sin');
+
+        if (tieneObligatoria) {
+            spanFianza.classList.add('fianza-obligatoria');
+        } else if (tieneOpcional) {
+            spanFianza.classList.add('fianza-opcional');
+        }
+    }
+}
             }
         }
     </script>
