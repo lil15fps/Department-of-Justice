@@ -403,11 +403,12 @@
         <div class="summary" id="resumen">
             <h3><i class="fas fa-clipboard-list"></i> CARGOS SELECCIONADOS</h3>
             <ul id="lista-cargos"></ul>
-            <p><strong>Total Minutos:</strong> <span id="total-min">$0</span></p>
+            <p><strong>Total Minutos:</strong> <span id="total-min">0</span></p>
             <p><strong>Fianza:</strong> <span id="estado-fianza">$0</span></p>
             <p><strong>Multas:</strong> <span id="total-multas" class="valor-monetario">$0</span> <span id="limite-multas-mensaje" class="fianza-limite" style="display: none;">LÍMITE ALCANZADO</span></p>
             <p id="Resto-container" style="display: none;"><strong>Resto (/multar):</strong> <span id="Resto-multas" class="valor-monetario">$0</span></p>
             <p><strong>Multas por balas:</strong> <span id="total-balas" class="valor-monetario">$0</span></p>
+            <p><strong>Multas por estupefacientes:</strong> <span id="total-estupefacientes" class="valor-monetario">$0</span></p>
             <p><strong>Multa total:</strong> <span id="total-por-multar" class="valor-monetario">$0</span></p>
             <div style="margin-top: 15px;">
                 <button id="limpiar-seleccion" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-right: 10px;">
@@ -565,6 +566,52 @@
                 <tr class="total-row">
                     <td colspan="3" class="totales-cell">TOTAL GENERAL:</td>
                     <td id="total-general">$0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Calculadora de Estupefacientes -->
+        <div class="category calculadora-estupefacientes-category">Calculadora de Estupefacientes</div>
+        <table class="multas-armas calculadora-estupefacientes">
+            <thead>
+                <tr>
+                    <th>TIPO DE ESTUPEFACIENTE</th>
+                    <th>CANTIDAD</th>
+                    <th>MULTA POR UNIDAD</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Posesión de Cannabis (gramos)</td>
+                    <td>
+                        <input type="number" min="0" class="cantidad-input" data-multa="500" value="0">
+                        <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                    </td>
+                    <td>$500</td>
+                    <td class="total-estupefaciente">$0</td>
+                </tr>
+                <tr>
+                    <td>Cultivo de Cannabis (plantas)</td>
+                    <td>
+                        <input type="number" min="0" class="cantidad-input" data-multa="5000" value="0">
+                        <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                    </td>
+                    <td>$5,000</td>
+                    <td class="total-estupefaciente">$0</td>
+                </tr>
+                <tr>
+                    <td>Posesión de Cocaina (gramos)</td>
+                    <td>
+                        <input type="number" min="0" class="cantidad-input" data-multa="750" value="0">
+                        <div class="mensaje-maximo">Multa máxima alcanzada</div>
+                    </td>
+                    <td>$750</td>
+                    <td class="total-estupefaciente">$0</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" class="totales-cell">TOTAL GENERAL:</td>
+                    <td id="total-general-estupefacientes">$0</td>
                 </tr>
             </tbody>
         </table>
@@ -1318,6 +1365,7 @@
         const LIMITE_MULTAS = 10000;
         let filaSeleccionada = null;
         let totalBalas = 0;
+        let totalEstupefacientes = 0;
 
         // Extensión de jQuery para seleccionar por texto
         jQuery.expr[':'].contains = function(a, i, m) {
@@ -1332,6 +1380,7 @@
             const estadoFianza = document.getElementById('estado-fianza');
             const totalMultas = document.getElementById('total-multas');
             const totalBalasElement = document.getElementById('total-balas');
+            const totalEstupefacientesElement = document.getElementById('total-estupefacientes');
             const totalPorMultar = document.getElementById('total-por-multar');
             const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
             const RestoContainer = document.getElementById('Resto-container');
@@ -1366,6 +1415,7 @@
                 });
                 cargosSeleccionados = [];
                 totalBalas = 0;
+                totalEstupefacientes = 0;
                 actualizarResumen();
             });
 
@@ -1625,8 +1675,11 @@
                 // Actualizar total de multas por balas
                 totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
 
-                // Calcular total por multar (Resto + multas por balas)
-                const totalPorMultarValor = Resto + totalBalas;
+                // Actualizar total de multas por estupefacientes
+                totalEstupefacientesElement.textContent = `$${totalEstupefacientes.toLocaleString()}`;
+
+                // Calcular total por multar (Resto + multas por balas + multas por estupefacientes)
+                const totalPorMultarValor = Resto + totalBalas + totalEstupefacientes;
                 totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
@@ -1672,19 +1725,26 @@
             searchInput.addEventListener('input', function() {
                 const filter = searchInput.value.toLowerCase().trim();
                 
-                // Ocultar siempre la calculadora de multas durante la búsqueda
+                // Ocultar siempre las calculadoras durante la búsqueda
                 const calculadoraMultas = document.querySelector('.calculadora-multas');
                 const calculadoraCategory = document.querySelector('.calculadora-multas-category');
+                const calculadoraEstupefacientes = document.querySelector('.calculadora-estupefacientes');
+                const calculadoraEstupefacientesCategory = document.querySelector('.calculadora-estupefacientes-category');
                 
                 if (calculadoraMultas && calculadoraCategory) {
                     calculadoraMultas.style.display = 'none';
                     calculadoraCategory.style.display = 'none';
                 }
                 
+                if (calculadoraEstupefacientes && calculadoraEstupefacientesCategory) {
+                    calculadoraEstupefacientes.style.display = 'none';
+                    calculadoraEstupefacientesCategory.style.display = 'none';
+                }
+                
                 if (filter === '') {
-                    // Mostrar todas las tablas excepto la calculadora de multas (que se maneja con su categoría)
+                    // Mostrar todas las tablas excepto las calculadoras (que se manejan con sus categorías)
                     tables.forEach(table => {
-                        if (!table.classList.contains('calculadora-multas')) {
+                        if (!table.classList.contains('calculadora-multas') && !table.classList.contains('calculadora-estupefacientes')) {
                             const filas = table.querySelectorAll('tbody tr');
                             filas.forEach(fila => {
                                 fila.style.display = '';
@@ -1694,24 +1754,27 @@
                         }
                     });
                     
-                    // Mostrar la categoría de la calculadora (pero no la tabla a menos que se haga clic)
+                    // Mostrar las categorías de las calculadoras (pero no las tablas a menos que se haga clic)
                     if (calculadoraCategory) {
                         calculadoraCategory.style.display = 'flex';
+                    }
+                    if (calculadoraEstupefacientesCategory) {
+                        calculadoraEstupefacientesCategory.style.display = 'flex';
                     }
                     return;
                 }
                 
                 // Ocultar todas las tablas primero
                 tables.forEach(table => {
-                    if (!table.classList.contains('calculadora-multas')) {
+                    if (!table.classList.contains('calculadora-multas') && !table.classList.contains('calculadora-estupefacientes')) {
                         table.style.display = 'none';
                         table.previousElementSibling.style.display = 'none';
                     }
                 });
                 
-                // Buscar en todas las tablas excepto la calculadora de multas
+                // Buscar en todas las tablas excepto las calculadoras
                 tables.forEach(table => {
-                    if (!table.classList.contains('calculadora-multas')) {
+                    if (!table.classList.contains('calculadora-multas') && !table.classList.contains('calculadora-estupefacientes')) {
                         const filas = table.querySelectorAll('tbody tr');
                         let encontrado = false;
                         
@@ -1785,6 +1848,38 @@
                 totalBalas = totalGeneral;
                 actualizarResumen();
             }
+
+            // Calculadora de estupefacientes
+            const cantidadInputs = document.querySelectorAll('.cantidad-input');
+            
+            cantidadInputs.forEach(input => {
+                input.addEventListener('input', calcularEstupefacientes);
+            });
+            
+            function calcularEstupefacientes() {
+                let totalGeneral = 0;
+                
+                cantidadInputs.forEach(input => {
+                    const row = input.closest('tr');
+                    const mensajeMaximo = row.querySelector('.mensaje-maximo');
+                    
+                    let cantidad = parseInt(input.value) || 0;
+                    const multaPorUnidad = parseInt(input.dataset.multa);
+                    let total = cantidad * multaPorUnidad;
+                    
+                    // Actualizar el total de este estupefaciente
+                    const totalEstupefacienteCell = row.querySelector('.total-estupefaciente');
+                    totalEstupefacienteCell.textContent = `$${total.toLocaleString()}`;
+                    
+                    // Sumar al total general
+                    totalGeneral += total;
+                });
+                
+                // Actualizar el total general
+                document.getElementById('total-general-estupefacientes').textContent = `$${totalGeneral.toLocaleString()}`;
+                totalEstupefacientes = totalGeneral;
+                actualizarResumen();
+            }
         });
 
         function quitarCargo(index) {
@@ -1801,6 +1896,7 @@
                 const estadoFianza = document.getElementById('estado-fianza');
                 const totalMultas = document.getElementById('total-multas');
                 const totalBalasElement = document.getElementById('total-balas');
+                const totalEstupefacientesElement = document.getElementById('total-estupefacientes');
                 const totalPorMultar = document.getElementById('total-por-multar');
                 const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
                 const RestoContainer = document.getElementById('Resto-container');
@@ -1894,8 +1990,11 @@
                 // Actualizar total de multas por balas
                 totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
 
-                // Calcular total por multar (Resto + multas por balas)
-                const totalPorMultarValor = Resto + totalBalas;
+                // Actualizar total de multas por estupefacientes
+                totalEstupefacientesElement.textContent = `$${totalEstupefacientes.toLocaleString()}`;
+
+                // Calcular total por multar (Resto + multas por balas + multas por estupefacientes)
+                const totalPorMultarValor = Resto + totalBalas + totalEstupefacientes;
                 totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
 
                 // Calcular fianza con límite
