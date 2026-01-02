@@ -484,6 +484,79 @@
             </tbody>
         </table>
 
+        <!-- Clasificación Legal de Armas -->
+        <div class="category">Clasificación Legal de Armas</div>
+        <table class="penalTable" id="tabla-armas-legales">
+            <thead>
+                <tr>
+                    <th>Tipo de Arma</th>
+                    <th>Estado Legal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sección de Armas Legales -->
+                <tr>
+                    <td colspan="2" style="background-color: #00274d; color: white; font-weight: bold; text-align: center; letter-spacing: 1px;">ARMAS LEGALES (Poseer con licencia)</td>
+                </tr>
+                <tr>
+                    <td>Desert Eagle</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Colt 45</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Rifle de asalto M4A1</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Rifle de caza</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Sub-fusil MP5</td>
+                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
+                </tr>
+                
+                <!-- Sección de Armas Ilegales -->
+                <tr>
+                    <td colspan="2" style="background-color: #00274d; color: white; font-weight: bold; text-align: center; letter-spacing: 1px;">ARMAS ILEGALES (Prohibidas)</td>
+                </tr>
+                <tr>
+                    <td>Rifle de asalto AK-47</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Escopeta recortada</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Escopeta Remington</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Sub-fusil TEC-9</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Sub-fusil Uzi</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                <tr>
+                    <td>Rifle de Francotirador</td>
+                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
+                </tr>
+                
+                <!-- Nota sobre sables -->
+                <tr>
+                    <td colspan="2" style="text-align: center; font-style: italic; font-size: 0.9em;">
+                        Nota: La katana es considerada un sable (no es arma de fuego)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
         <!-- Calculadora de Multas por Armas -->
         <div class="category calculadora-multas-category">Calculadora de Multas por Armas</div>
         <table class="multas-armas calculadora-multas">
@@ -580,7 +653,7 @@
                 <tr>
                     <td>Posesión de Cannabis (gramos)</td>
                     <td>
-                        <input type="number" min="0" class="cantidad-input" data-multa="500" value="0">
+                        <input type="number" min="0" class="cantidad-input" data-multa="500" value="0" id="cannabis-input">
                         <div class="mensaje-maximo">Multa máxima alcanzada</div>
                     </td>
                     <td>$500</td>
@@ -589,7 +662,7 @@
                 <tr>
                     <td>Cultivo de Cannabis (plantas)</td>
                     <td>
-                        <input type="number" min="0" class="cantidad-input" data-multa="5000" value="0">
+                        <input type="number" min="0" class="cantidad-input" data-multa="5000" value="0" id="cultivo-input">
                         <div class="mensaje-maximo">Multa máxima alcanzada</div>
                     </td>
                     <td>$5,000</td>
@@ -598,7 +671,7 @@
                 <tr>
                     <td>Posesión de Cocaina (gramos)</td>
                     <td>
-                        <input type="number" min="0" class="cantidad-input" data-multa="750" value="0">
+                        <input type="number" min="0" class="cantidad-input" data-multa="750" value="0" id="cocaina-input">
                         <div class="mensaje-maximo">Multa máxima alcanzada</div>
                     </td>
                     <td>$750</td>
@@ -889,7 +962,7 @@
                 </tr>
                 <tr>
                     <td>Artículo 2</td>
-                    <td>Realizar necesidades en espacios públicos</td>
+                    <td>Realizar necesidades en espacios públicas</td>
                     <td>15 min (calabozo)</td>
                     <td>N/A</td>
                     <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
@@ -1048,7 +1121,7 @@
 
         <!-- Tenencia ilegal de Armas -->
         <div class="category">Tenencia ilegal de Armas</div>
-        <table class="penalTable">
+        <table class="penalTable" id="tenencia-armas">
             <thead>
                 <tr>
                     <th>Artículo</th>
@@ -1387,28 +1460,38 @@
         let cargoArmaMinRango = null;
         let cargoArmaDesc = '';
         
-        // Mapeo de cargos a calculadoras
-        const CARGOS_ARMAS = [
-            "Porte de Sable",
-            "Tenencia de arma de fuego sin licencia", 
-            "Porte de arma de fuego ilegal",
-            "Pistola con calibre 22mm o menor (Colt45)",
-            "Pistola con calibre mayor a 22mm (Deagle)",
-            "Escopeta recortada",
-            "Micro-uzi y Tec-9",
-            "AK-47",
-            "Rifles francotirador",
-            "Explosivos",
-            "Venta ilícita de armas de fuego o explosivos",
-            "Fabricación de armas de fuego ilícita",
-            "Compra ilícita de armas de fuego"
-        ];
+        // Variables para cargos de estupefacientes con minutos pendientes
+        let cargoEstupefacientePendiente = null;
         
-        const CARGOS_ESTUPEFACIENTES = [
-            "Posesión de Cannabis",
-            "Cultivo de Cannabis", 
-            "Posesión de Cocaina"
-        ];
+        // Variables para controlar timeouts de entrada
+        let timeoutCannabis = null;
+        let timeoutCultivo = null;
+        let timeoutCocaina = null;
+        
+        // Mapeo de armas a su estado legal (basado en la tabla "Clasificación Legal de Armas")
+        const MAPA_ARMAS_LEGALES = {
+            "Desert Eagle": "LEGAL",
+            "Colt 45": "LEGAL",
+            "Rifle de asalto M4A1": "LEGAL",
+            "Rifle de caza": "LEGAL",
+            "Sub-fusil MP5": "LEGAL",
+            "Rifle de asalto AK-47": "ILEGAL",
+            "Escopeta recortada": "ILEGAL",
+            "Escopeta Remington": "ILEGAL",
+            "Sub-fusil TEC-9": "ILEGAL",
+            "Sub-fusil Uzi": "ILEGAL",
+            "Rifle de Francotirador": "ILEGAL"
+        };
+        
+        // Mapeo de armas en la calculadora a tipos de armas
+        const MAPA_CALCULADORA_ARMAS = {
+            "Colt45": "Colt 45",
+            "Deagle": "Desert Eagle",
+            "Escopetas": "Escopeta recortada",
+            "Subfusil": "Sub-fusil Uzi",
+            "Fusil de Asalto": "Rifle de asalto AK-47",
+            "Rifles": "Rifle de Francotirador"
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
@@ -1479,6 +1562,12 @@
                 cargoArmaIndex = -1;
                 cargoArmaMinRango = null;
                 cargoArmaDesc = '';
+                cargoEstupefacientePendiente = null;
+                
+                // Limpiar timeouts
+                clearTimeout(timeoutCannabis);
+                clearTimeout(timeoutCultivo);
+                clearTimeout(timeoutCocaina);
                 
                 // Limpiar calculadoras
                 document.querySelectorAll('.balas-input').forEach(input => {
@@ -1581,8 +1670,40 @@
                     
                     const nombreCargo = celdas.length >= 5 ? celdas[1].textContent.trim() : celdas[0].textContent.trim();
                     
-                    // Verificar si es un cargo de armas
-                    if (CARGOS_ARMAS.includes(nombreCargo)) {
+                    // Verificar si es un cargo de armas que usa calculadora
+                    const esArticuloEspecifico = articulo.includes('Artículo 3.');
+                    
+                    if (esArticuloEspecifico) {
+                        // Determinar el tipo de arma basado en el artículo
+                        let tipoArma = "";
+                        let tipoCargo = "Porte de arma de fuego ilegal"; // Por defecto
+                        
+                        if (nombreCargo.includes("Colt45")) {
+                            tipoArma = "Colt 45";
+                            // Colt 45 es legal, por lo tanto es "Porte de arma de fuego sin licencia"
+                            tipoCargo = "Porte de arma de fuego sin licencia";
+                        } else if (nombreCargo.includes("Deagle")) {
+                            tipoArma = "Desert Eagle";
+                            // Desert Eagle es legal, por lo tanto es "Porte de arma de fuego sin licencia"
+                            tipoCargo = "Porte de arma de fuego sin licencia";
+                        } else if (nombreCargo.includes("Escopeta recortada")) {
+                            tipoArma = "Escopeta recortada";
+                            // Escopeta recortada es ilegal
+                            tipoCargo = "Porte de arma de fuego ilegal";
+                        } else if (nombreCargo.includes("Micro-uzi")) {
+                            tipoArma = "Sub-fusil Uzi";
+                            // Uzi es ilegal
+                            tipoCargo = "Porte de arma de fuego ilegal";
+                        } else if (nombreCargo.includes("AK-47")) {
+                            tipoArma = "Rifle de asalto AK-47";
+                            // AK-47 es ilegal
+                            tipoCargo = "Porte de arma de fuego ilegal";
+                        } else if (nombreCargo.includes("Rifles francotirador")) {
+                            tipoArma = "Rifle de Francotirador";
+                            // Rifle francotirador es ilegal
+                            tipoCargo = "Porte de arma de fuego ilegal";
+                        }
+                        
                         // Mostrar calculadora de multas por armas
                         if (calculadoraMultasCategory && calculadoraMultasTable) {
                             // Expandir la categoría
@@ -1596,49 +1717,44 @@
                             
                             const rangoMinutos = extraerRangoMinutos(minStr);
                             
-                            // Agregar el cargo con los minutos mínimos (se actualizarán después si es un rango)
-                            const minutosInicial = rangoMinutos.esRango ? rangoMinutos.min : rangoMinutos.min;
-                            agregarCargoSeleccionado(fila, desc, minutosInicial, 0, fianza, destino);
+                            // Buscar la fila del cargo general correspondiente
+                            const cargoGeneral = tipoCargo;
+                            let filaCargoGeneral = null;
                             
-                            // Guardar información del cargo de arma si tiene rango
-                            if (rangoMinutos.esRango) {
-                                cargoArmaIndex = cargosSeleccionados.length - 1;
-                                cargoArmaMinRango = rangoMinutos;
-                                cargoArmaDesc = desc;
+                            // Buscar en la tabla de cargos comunes
+                            document.querySelectorAll('.penalTable').forEach(table => {
+                                const filas = table.querySelectorAll('tbody tr');
+                                filas.forEach(filaTabla => {
+                                    if (filaTabla.cells.length === 4) {
+                                        const nombreCargoTabla = filaTabla.cells[0].textContent.trim();
+                                        if (nombreCargoTabla === cargoGeneral) {
+                                            filaCargoGeneral = filaTabla;
+                                        }
+                                    }
+                                });
+                            });
+                            
+                            if (filaCargoGeneral) {
+                                // Agregar el cargo general con 0 minutos inicialmente
+                                // Los minutos se establecerán después de ingresar balas
+                                agregarCargoSeleccionado(filaCargoGeneral, cargoGeneral, 0, 0, "OPCIONAL", "");
+                                
+                                // Guardar información del cargo de arma si tiene rango
+                                if (rangoMinutos.esRango) {
+                                    cargoArmaIndex = cargosSeleccionados.length - 1;
+                                    cargoArmaMinRango = rangoMinutos;
+                                    cargoArmaDesc = `${cargoGeneral} (${tipoArma})`;
+                                }
+                                
+                                alert(`Se detectó ${tipoArma}. Se ha agregado el cargo "${cargoGeneral}". Seleccione la cantidad de balas en la "Calculadora de Multas por Armas".`);
                             }
-                            
-                            alert(`Seleccione la cantidad de balas en la "Calculadora de Multas por Armas" para ${nombreCargo}`);
                         }
                         return;
                     }
                     
                     // Verificar si es un cargo de estupefacientes
-                    if (CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
-                        // Caso especial para Posesión de Cannabis (Artículo 4)
-                        if (nombreCargo === "Posesión de Cannabis") {
-                            // Mostrar calculadora de estupefacientes
-                            if (calculadoraEstupefacientesCategory && calculadoraEstupefacientesTable) {
-                                // Expandir la categoría
-                                if (!calculadoraEstupefacientesCategory.classList.contains('active')) {
-                                    calculadoraEstupefacientesCategory.classList.add('active');
-                                    calculadoraEstupefacientesTable.style.display = 'table';
-                                }
-                                
-                                // Desplazar a la calculadora
-                                calculadoraEstupefacientesCategory.scrollIntoView({ behavior: 'smooth' });
-                                
-                                // Agregar el cargo con 0 minutos inicialmente (se actualizará después si es >25g)
-                                agregarCargoSeleccionado(fila, desc, 0, 0, fianza, destino);
-                                
-                                // Guardar el índice del cargo de cannabis
-                                cargoCannabisIndex = cargosSeleccionados.length - 1;
-                                
-                                alert(`Ingrese la cantidad de gramos en la "Calculadora de Estupefacientes". Más de 25 gramos agregará tiempo de prisión.`);
-                            }
-                            return;
-                        }
-                        
-                        // Para otros estupefacientes (Cultivo de Cannabis, Posesión de Cocaina)
+                    if (nombreCargo === "Posesión de Cannabis" || nombreCargo === "Cultivo de Cannabis" || nombreCargo === "Posesión de Cocaina") {
+                        // Mostrar calculadora de estupefacientes
                         if (calculadoraEstupefacientesCategory && calculadoraEstupefacientesTable) {
                             // Expandir la categoría
                             if (!calculadoraEstupefacientesCategory.classList.contains('active')) {
@@ -1649,13 +1765,23 @@
                             // Desplazar a la calculadora
                             calculadoraEstupefacientesCategory.scrollIntoView({ behavior: 'smooth' });
                             
-                            // Para Cultivo de Cannabis y Posesión de Cocaina, usar minutos fijos inicialmente
+                            // Agregar el cargo con 0 minutos inicialmente
+                            // Los minutos se establecerán después de ingresar la cantidad
+                            agregarCargoSeleccionado(fila, desc, 0, 0, fianza, destino);
+                            
+                            // Guardar el índice del cargo y la información del rango de minutos
+                            const indexCargo = cargosSeleccionados.length - 1;
                             const rangoMinutos = extraerRangoMinutos(minStr);
-                            const minutosInicial = rangoMinutos.esRango ? rangoMinutos.min : rangoMinutos.min;
                             
-                            agregarCargoSeleccionado(fila, desc, minutosInicial, 0, fianza, destino);
+                            // Guardar información del cargo pendiente
+                            cargoEstupefacientePendiente = {
+                                index: indexCargo,
+                                nombre: nombreCargo,
+                                rangoMinutos: rangoMinutos,
+                                desc: desc
+                            };
                             
-                            alert(`Ingrese la cantidad en la "Calculadora de Estupefacientes" para ${nombreCargo}`);
+                            alert(`Ingrese la cantidad en la "Calculadora de Estupefacientes" para ${nombreCargo}. Luego se le pedirá seleccionar los minutos.`);
                         }
                         return;
                     }
@@ -1728,7 +1854,7 @@
                 }
             });
 
-            // Confirmar selección de minutos (para cannabis y armas)
+            // Confirmar selección de minutos
             confirmarBtn.addEventListener('click', function() {
                 const minutos = parseInt(minutosInput.value);
                 const min = parseInt(minutosInput.min);
@@ -1739,7 +1865,7 @@
                     return;
                 }
                 
-                // Actualizar minutos para cannabis
+                // Actualizar minutos para cannabis si ya estaba agregado
                 if (cargoCannabisIndex !== -1 && cargosSeleccionados[cargoCannabisIndex]) {
                     cargosSeleccionados[cargoCannabisIndex].min = minutos;
                 }
@@ -1747,6 +1873,12 @@
                 // Actualizar minutos para armas
                 if (cargoArmaIndex !== -1 && cargosSeleccionados[cargoArmaIndex]) {
                     cargosSeleccionados[cargoArmaIndex].min = minutos;
+                }
+                
+                // Actualizar minutos para estupefacientes pendientes
+                if (cargoEstupefacientePendiente !== null && cargosSeleccionados[cargoEstupefacientePendiente.index]) {
+                    cargosSeleccionados[cargoEstupefacientePendiente.index].min = minutos;
+                    cargoEstupefacientePendiente = null;
                 }
                 
                 // Actualizar la descripción en la lista
@@ -1794,17 +1926,13 @@
                     // Mostrar multa si existe (para Amenazas)
                     const multaText = cargo.multa > 0 ? ` - Multa: $${cargo.multa.toLocaleString()}` : '';
                     
-                    // Para cargos de armas o estupefacientes, mostrar información adicional
-                    let infoExtra = '';
-                    const nombreCargo = cargo.desc.includes(' - ') ? cargo.desc.split(' - ')[1] : cargo.desc;
-                    
-                    if (CARGOS_ARMAS.includes(nombreCargo)) {
-                        infoExtra = ' (Ver calculadora de armas)';
-                    } else if (CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
-                        infoExtra = ' (Ver calculadora de estupefacientes)';
+                    // Para cargos de cannabis con más de 25g, mostrar información de gramos
+                    let infoGramos = '';
+                    if (cargo.desc.includes("Posesión de Cannabis") && gramosCannabis > 25) {
+                        infoGramos = ` (${gramosCannabis}g)`;
                     }
                     
-                    span.textContent = `${cargo.desc}${cargo.min > 0 ? ` (${cargo.min} min)` : ''}${multaText}${destinoText}${infoExtra}`;
+                    span.textContent = `${cargo.desc}${cargo.min > 0 ? ` (${cargo.min} min)` : ''}${multaText}${destinoText}${infoGramos}`;
                     
                     const btn = document.createElement('button');
                     btn.className = 'btn-eliminar';
@@ -1827,10 +1955,8 @@
                         }
                     }
 
-                    // Sumar multas fijas (excluyendo cargos que usan calculadoras)
-                    if (!CARGOS_ARMAS.includes(nombreCargo) && !CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
-                        totalMultasFijas += cargo.multa;
-                    }
+                    // Sumar multas fijas
+                    totalMultasFijas += cargo.multa;
 
                     if (cargo.fianza.includes('SIN FIANZA')) {
                         tieneSinFianza = true;
@@ -1933,12 +2059,15 @@
                     }
                     
                     // Si es un cargo de armas, resetear variables
-                    if (CARGOS_ARMAS.includes(nombreCargo)) {
-                        if (cargoArmaIndex === index) {
-                            cargoArmaIndex = -1;
-                            cargoArmaMinRango = null;
-                            cargoArmaDesc = '';
-                        }
+                    if (cargoArmaIndex === index) {
+                        cargoArmaIndex = -1;
+                        cargoArmaMinRango = null;
+                        cargoArmaDesc = '';
+                    }
+                    
+                    // Si es un cargo de estupefacientes pendiente
+                    if (cargoEstupefacientePendiente && cargoEstupefacientePendiente.index === index) {
+                        cargoEstupefacientePendiente = null;
                     }
                     
                     // Eliminar el cargo del array
@@ -2035,7 +2164,11 @@
             const balasInputs = document.querySelectorAll('.balas-input');
             
             balasInputs.forEach(input => {
-                input.addEventListener('input', function() {
+                // Mantener evento 'input' para cálculo en tiempo real
+                input.addEventListener('input', calcularMultas);
+                
+                // Agregar evento 'change' para mostrar modal después de terminar de ingresar
+                input.addEventListener('change', function() {
                     calcularMultas();
                     
                     // Después de calcular multas, verificar si hay cargos de armas con rango
@@ -2105,52 +2238,138 @@
                 actualizarResumen();
             }
 
-            // Calculadora de estupefacientes
+            // Calculadora de estupefacientes - CON TIMEOUT PARA ESPERAR A QUE EL USUARIO TERMINE DE INGRESAR
             const cantidadInputs = document.querySelectorAll('.cantidad-input');
             
             cantidadInputs.forEach(input => {
-                input.addEventListener('input', calcularEstupefacientes);
+                // Mantener evento 'input' para cálculo en tiempo real
+                input.addEventListener('input', function() {
+                    calcularEstupefacientes();
+                    
+                    // Para Posesión de Cannabis: limpiar timeout anterior y crear uno nuevo
+                    if (input.id === 'cannabis-input') {
+                        clearTimeout(timeoutCannabis);
+                        timeoutCannabis = setTimeout(function() {
+                            verificarMostrarModalCannabis();
+                        }, 1000); // Esperar 1 segundo después de que el usuario deje de escribir
+                    }
+                    
+                    // Para Cultivo de Cannabis
+                    if (input.id === 'cultivo-input') {
+                        clearTimeout(timeoutCultivo);
+                        timeoutCultivo = setTimeout(function() {
+                            verificarMostrarModalCultivo();
+                        }, 1000);
+                    }
+                    
+                    // Para Posesión de Cocaina
+                    if (input.id === 'cocaina-input') {
+                        clearTimeout(timeoutCocaina);
+                        timeoutCocaina = setTimeout(function() {
+                            verificarMostrarModalCocaina();
+                        }, 1000);
+                    }
+                });
+                
+                // También agregar evento 'change' por si el usuario usa las flechas
+                input.addEventListener('change', function() {
+                    calcularEstupefacientes();
+                    
+                    // Verificar inmediatamente para cannabis
+                    if (input.id === 'cannabis-input') {
+                        verificarMostrarModalCannabis();
+                    }
+                    
+                    // Verificar inmediatamente para cultivo
+                    if (input.id === 'cultivo-input') {
+                        verificarMostrarModalCultivo();
+                    }
+                    
+                    // Verificar inmediatamente para cocaína
+                    if (input.id === 'cocaina-input') {
+                        verificarMostrarModalCocaina();
+                    }
+                });
             });
+            
+            function verificarMostrarModalCannabis() {
+                const cantidad = parseInt(document.getElementById('cannabis-input').value) || 0;
+                gramosCannabis = cantidad;
+                
+                // Solo mostrar modal si hay más de 25 gramos Y hay un cargo pendiente
+                if (cantidad > 25 && cargoEstupefacientePendiente && cargoEstupefacientePendiente.nombre === "Posesión de Cannabis") {
+                    // Mostrar modal para seleccionar minutos
+                    modalTitulo.textContent = "Seleccionar minutos para Posesión de Cannabis";
+                    
+                    // Sugerir minutos basados en la cantidad
+                    let rangoMin = cargoEstupefacientePendiente.rangoMinutos.min;
+                    let rangoMax = cargoEstupefacientePendiente.rangoMinutos.max;
+                    let minutosSugeridos = rangoMin;
+                    
+                    if (cantidad >= 75) {
+                        minutosSugeridos = rangoMax;
+                    } else if (cantidad >= 50) {
+                        minutosSugeridos = Math.floor((rangoMin + rangoMax) / 2);
+                    }
+                    
+                    modalDescripcion.textContent = `Se detectaron ${cantidad} gramos de cannabis (más de 25g). Seleccione los minutos de prisión:`;
+                    modalRangoMinutos.textContent = `Rango: ${rangoMin} a ${rangoMax} minutos`;
+                    minutosInput.min = rangoMin;
+                    minutosInput.max = rangoMax;
+                    minutosInput.value = minutosSugeridos;
+                    modalMinutos.style.display = 'block';
+                }
+            }
+            
+            function verificarMostrarModalCultivo() {
+                const cantidad = parseInt(document.getElementById('cultivo-input').value) || 0;
+                
+                // Solo mostrar modal si hay cantidad > 0 Y hay un cargo pendiente
+                if (cantidad > 0 && cargoEstupefacientePendiente && cargoEstupefacientePendiente.nombre === "Cultivo de Cannabis") {
+                    // Mostrar modal para seleccionar minutos
+                    modalTitulo.textContent = "Seleccionar minutos para Cultivo de Cannabis";
+                    
+                    let rangoMin = cargoEstupefacientePendiente.rangoMinutos.min;
+                    let rangoMax = cargoEstupefacientePendiente.rangoMinutos.max;
+                    
+                    modalDescripcion.textContent = `Se detectaron ${cantidad} plantas de cannabis. Seleccione los minutos de prisión:`;
+                    modalRangoMinutos.textContent = `Rango: ${rangoMin} a ${rangoMax} minutos`;
+                    minutosInput.min = rangoMin;
+                    minutosInput.max = rangoMax;
+                    minutosInput.value = rangoMin; // Valor mínimo por defecto
+                    modalMinutos.style.display = 'block';
+                }
+            }
+            
+            function verificarMostrarModalCocaina() {
+                const cantidad = parseInt(document.getElementById('cocaina-input').value) || 0;
+                
+                // Solo mostrar modal si hay cantidad > 0 Y hay un cargo pendiente
+                if (cantidad > 0 && cargoEstupefacientePendiente && cargoEstupefacientePendiente.nombre === "Posesión de Cocaina") {
+                    // Mostrar modal para seleccionar minutos
+                    modalTitulo.textContent = "Seleccionar minutos para Posesión de Cocaina";
+                    
+                    let rangoMin = cargoEstupefacientePendiente.rangoMinutos.min;
+                    let rangoMax = cargoEstupefacientePendiente.rangoMinutos.max;
+                    
+                    modalDescripcion.textContent = `Se detectaron ${cantidad} gramos de cocaína. Seleccione los minutos de prisión:`;
+                    modalRangoMinutos.textContent = `Rango: ${rangoMin} a ${rangoMax} minutos`;
+                    minutosInput.min = rangoMin;
+                    minutosInput.max = rangoMax;
+                    minutosInput.value = rangoMin; // Valor mínimo por defecto
+                    modalMinutos.style.display = 'block';
+                }
+            }
             
             function calcularEstupefacientes() {
                 let totalGeneral = 0;
                 
                 cantidadInputs.forEach(input => {
                     const row = input.closest('tr');
-                    const tipoEstupefaciente = row.querySelector('td').textContent;
                     
                     let cantidad = parseInt(input.value) || 0;
                     const multaPorUnidad = parseInt(input.dataset.multa);
                     let total = cantidad * multaPorUnidad;
-                    
-                    // Caso especial para Posesión de Cannabis (Artículo 4)
-                    if (tipoEstupefaciente.includes("Posesión de Cannabis")) {
-                        gramosCannabis = cantidad;
-                        
-                        // Si hay más de 25 gramos, mostrar modal para seleccionar minutos
-                        if (cantidad > 25 && cargoCannabisIndex !== -1) {
-                            // Mostrar modal específico para cannabis
-                            modalTitulo.textContent = "Seleccionar minutos para Posesión de Cannabis";
-                            modalDescripcion.textContent = `Se detectaron ${cantidad} gramos de cannabis (más de 25g). Seleccione los minutos de prisión (12-36 min):`;
-                            modalRangoMinutos.textContent = `Rango: 12 a 36 minutos`;
-                            minutosInput.min = 12;
-                            minutosInput.max = 36;
-                            
-                            // Sugerir minutos basados en la cantidad
-                            let minutosSugeridos = 12;
-                            if (cantidad >= 75) {
-                                minutosSugeridos = 36;
-                            } else if (cantidad >= 50) {
-                                minutosSugeridos = 24;
-                            }
-                            
-                            minutosInput.value = minutosSugeridos;
-                            modalMinutos.style.display = 'block';
-                        } else if (cargoCannabisIndex !== -1) {
-                            // Si es 25 o menos gramos, quitar minutos
-                            cargosSeleccionados[cargoCannabisIndex].min = 0;
-                        }
-                    }
                     
                     // Actualizar el total de este estupefaciente
                     const totalEstupefacienteCell = row.querySelector('.total-estupefaciente');
