@@ -368,28 +368,23 @@
         }
 
         /* Nuevos estilos para indicación de destino */
+        .destino-federal { 
+            background-color: #e74c3c; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
         
-.destino-federal { 
-    background-color: #e74c3c; 
-    color: white; 
-    padding: 5px 10px; 
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 0.9em;
-}
-
-        
-        
-.destino-calabozo { 
-    background-color: #3498db; 
-    color: white; 
-    padding: 5px 10px; 
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 0.9em;
-}
-
-
+        .destino-calabozo { 
+            background-color: #3498db; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -485,75 +480,6 @@
                     <td>48 min</td>
                     <td>N/A</td>
                     <td style="text-align: center;"><span class="fianza-opcional">OPCIONAL</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Clasificación Legal de Armas -->
-        <div class="category">Clasificación Legal de Armas</div>
-        <table class="penalTable">
-            <thead>
-                <tr>
-                    <th>Tipo de Arma</th>
-                    <th>Estado Legal</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Sección de Armas Legales -->
-                <tr>
-                    <td colspan="2" style="background-color: #00274d; color: white; font-weight: bold; text-align: center; letter-spacing: 1px;">ARMAS LEGALES (Poseer con licencia)</td>
-                </tr>
-                <tr>
-                    <td>Desert Eagle</td>
-                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Colt 45</td>
-                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>M4A1</td>
-                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Rifle de caza</td>
-                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Sub-fusil MP5</td>
-                    <td style="text-align: center;"><span class="fianza-obligatoria">LEGAL</span></td>
-                </tr>
-                
-                <!-- Sección de Armas Ilegales -->
-                <tr>
-                    <td colspan="2" style="background-color: #00274d; color: white; font-weight: bold; text-align: center; letter-spacing: 1px;">ARMAS ILEGALES (Prohibidas)</td>
-                </tr>
-                <tr>
-                    <td>AK-47</td>
-                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Escopetas</td>
-                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Sub-fusil TEC-9</td>
-                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Sub-fusil Uzi</td>
-                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
-                </tr>
-                <tr>
-                    <td>Rifle de Francotirador</td>
-                    <td style="text-align: center;"><span class="fianza-sin">ILEGAL</span></td>
-                </tr>
-                
-                <!-- Nota sobre sables -->
-                <tr>
-                    <td colspan="2" style="text-align: center; font-style: italic; font-size: 0.9em;">
-                        Nota: La katana es considerada un sable (no es arma de fuego)
-                    </td>
                 </tr>
             </tbody>
         </table>
@@ -1411,11 +1337,11 @@
     <div id="minutosModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Seleccionar minutos</h3>
+                <h3 id="modalTitulo">Seleccionar minutos</h3>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <p id="modalCargoDesc"></p>
+                <p id="modalDescripcion"></p>
                 <div class="rango-minutos" id="modalRangoMinutos"></div>
                 <input type="number" id="minutosInput" class="minutos-input" min="1" placeholder="Ingrese minutos">
             </div>
@@ -1453,11 +1379,36 @@
         let filaSeleccionada = null;
         let totalBalas = 0;
         let totalEstupefacientes = 0;
-
-        // Extensión de jQuery para seleccionar por texto
-        jQuery.expr[':'].contains = function(a, i, m) {
-          return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-        };
+        
+        // Variables para controlar cargos especiales
+        let gramosCannabis = 0;
+        let cargoCannabisIndex = -1;
+        let cargoArmaIndex = -1;
+        let cargoArmaMinRango = null;
+        let cargoArmaDesc = '';
+        
+        // Mapeo de cargos a calculadoras
+        const CARGOS_ARMAS = [
+            "Porte de Sable",
+            "Tenencia de arma de fuego sin licencia", 
+            "Porte de arma de fuego ilegal",
+            "Pistola con calibre 22mm o menor (Colt45)",
+            "Pistola con calibre mayor a 22mm (Deagle)",
+            "Escopeta recortada",
+            "Micro-uzi y Tec-9",
+            "AK-47",
+            "Rifles francotirador",
+            "Explosivos",
+            "Venta ilícita de armas de fuego o explosivos",
+            "Fabricación de armas de fuego ilícita",
+            "Compra ilícita de armas de fuego"
+        ];
+        
+        const CARGOS_ESTUPEFACIENTES = [
+            "Posesión de Cannabis",
+            "Cultivo de Cannabis", 
+            "Posesión de Cocaina"
+        ];
 
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
@@ -1481,10 +1432,17 @@
             const confirmarMultaBtn = document.getElementById('confirmarMulta');
             const minutosInput = document.getElementById('minutosInput');
             const multaInput = document.getElementById('multaInput');
-            const modalCargoDesc = document.getElementById('modalCargoDesc');
             const modalMultaDesc = document.getElementById('modalMultaDesc');
             const modalRangoMinutos = document.getElementById('modalRangoMinutos');
+            const modalTitulo = document.getElementById('modalTitulo');
+            const modalDescripcion = document.getElementById('modalDescripcion');
             const copiarNombresBtn = document.getElementById('copiar-nombres');
+            
+            // Referencias a las calculadoras
+            const calculadoraMultasCategory = document.querySelector('.calculadora-multas-category');
+            const calculadoraMultasTable = document.querySelector('.calculadora-multas');
+            const calculadoraEstupefacientesCategory = document.querySelector('.calculadora-estupefacientes-category');
+            const calculadoraEstupefacientesTable = document.querySelector('.calculadora-estupefacientes');
             
             // Hacer las categorías desplegables
             categories.forEach(category => {
@@ -1501,6 +1459,14 @@
                 }
             });
             
+            // Mostrar calculadoras inicialmente ocultas
+            if (calculadoraMultasTable) {
+                calculadoraMultasTable.style.display = 'none';
+            }
+            if (calculadoraEstupefacientesTable) {
+                calculadoraEstupefacientesTable.style.display = 'none';
+            }
+            
             document.getElementById('limpiar-seleccion').addEventListener('click', function() {
                 cargosSeleccionados.forEach(cargo => {
                     cargo.fila.classList.remove('selected');
@@ -1508,6 +1474,22 @@
                 cargosSeleccionados = [];
                 totalBalas = 0;
                 totalEstupefacientes = 0;
+                gramosCannabis = 0;
+                cargoCannabisIndex = -1;
+                cargoArmaIndex = -1;
+                cargoArmaMinRango = null;
+                cargoArmaDesc = '';
+                
+                // Limpiar calculadoras
+                document.querySelectorAll('.balas-input').forEach(input => {
+                    input.value = 0;
+                });
+                document.querySelectorAll('.cantidad-input').forEach(input => {
+                    input.value = 0;
+                });
+                
+                calcularMultas();
+                calcularEstupefacientes();
                 actualizarResumen();
             });
 
@@ -1572,7 +1554,7 @@
                     filaSeleccionada = fila;
                     
                     const celdas = fila.cells;
-                    let desc, minStr, multaStr, fianza, destino;
+                    let desc, minStr, multaStr, fianza, destino, articulo;
                     
                     if (celdas.length === 4) {
                         desc = celdas[0].textContent;
@@ -1580,13 +1562,16 @@
                         multaStr = celdas[2].textContent;
                         fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
                         destino = '';
+                        articulo = '';
                     } else if (celdas.length === 5) {
+                        articulo = celdas[0].textContent;
                         desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
                         minStr = celdas[2].textContent;
                         multaStr = celdas[3].textContent;
                         fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
                         destino = '';
                     } else if (celdas.length === 6) {
+                        articulo = celdas[0].textContent;
                         desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
                         minStr = celdas[2].textContent;
                         multaStr = celdas[3].textContent;
@@ -1594,11 +1579,89 @@
                         destino = celdas[5].querySelector('span')?.textContent.trim().toUpperCase() || '';
                     }
                     
-                    const rangoMinutos = extraerRangoMinutos(minStr);
-                    const multa = extraerMulta(multaStr);
+                    const nombreCargo = celdas.length >= 5 ? celdas[1].textContent.trim() : celdas[0].textContent.trim();
+                    
+                    // Verificar si es un cargo de armas
+                    if (CARGOS_ARMAS.includes(nombreCargo)) {
+                        // Mostrar calculadora de multas por armas
+                        if (calculadoraMultasCategory && calculadoraMultasTable) {
+                            // Expandir la categoría
+                            if (!calculadoraMultasCategory.classList.contains('active')) {
+                                calculadoraMultasCategory.classList.add('active');
+                                calculadoraMultasTable.style.display = 'table';
+                            }
+                            
+                            // Desplazar a la calculadora
+                            calculadoraMultasCategory.scrollIntoView({ behavior: 'smooth' });
+                            
+                            const rangoMinutos = extraerRangoMinutos(minStr);
+                            
+                            // Agregar el cargo con los minutos mínimos (se actualizarán después si es un rango)
+                            const minutosInicial = rangoMinutos.esRango ? rangoMinutos.min : rangoMinutos.min;
+                            agregarCargoSeleccionado(fila, desc, minutosInicial, 0, fianza, destino);
+                            
+                            // Guardar información del cargo de arma si tiene rango
+                            if (rangoMinutos.esRango) {
+                                cargoArmaIndex = cargosSeleccionados.length - 1;
+                                cargoArmaMinRango = rangoMinutos;
+                                cargoArmaDesc = desc;
+                            }
+                            
+                            alert(`Seleccione la cantidad de balas en la "Calculadora de Multas por Armas" para ${nombreCargo}`);
+                        }
+                        return;
+                    }
+                    
+                    // Verificar si es un cargo de estupefacientes
+                    if (CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
+                        // Caso especial para Posesión de Cannabis (Artículo 4)
+                        if (nombreCargo === "Posesión de Cannabis") {
+                            // Mostrar calculadora de estupefacientes
+                            if (calculadoraEstupefacientesCategory && calculadoraEstupefacientesTable) {
+                                // Expandir la categoría
+                                if (!calculadoraEstupefacientesCategory.classList.contains('active')) {
+                                    calculadoraEstupefacientesCategory.classList.add('active');
+                                    calculadoraEstupefacientesTable.style.display = 'table';
+                                }
+                                
+                                // Desplazar a la calculadora
+                                calculadoraEstupefacientesCategory.scrollIntoView({ behavior: 'smooth' });
+                                
+                                // Agregar el cargo con 0 minutos inicialmente (se actualizará después si es >25g)
+                                agregarCargoSeleccionado(fila, desc, 0, 0, fianza, destino);
+                                
+                                // Guardar el índice del cargo de cannabis
+                                cargoCannabisIndex = cargosSeleccionados.length - 1;
+                                
+                                alert(`Ingrese la cantidad de gramos en la "Calculadora de Estupefacientes". Más de 25 gramos agregará tiempo de prisión.`);
+                            }
+                            return;
+                        }
+                        
+                        // Para otros estupefacientes (Cultivo de Cannabis, Posesión de Cocaina)
+                        if (calculadoraEstupefacientesCategory && calculadoraEstupefacientesTable) {
+                            // Expandir la categoría
+                            if (!calculadoraEstupefacientesCategory.classList.contains('active')) {
+                                calculadoraEstupefacientesCategory.classList.add('active');
+                                calculadoraEstupefacientesTable.style.display = 'table';
+                            }
+                            
+                            // Desplazar a la calculadora
+                            calculadoraEstupefacientesCategory.scrollIntoView({ behavior: 'smooth' });
+                            
+                            // Para Cultivo de Cannabis y Posesión de Cocaina, usar minutos fijos inicialmente
+                            const rangoMinutos = extraerRangoMinutos(minStr);
+                            const minutosInicial = rangoMinutos.esRango ? rangoMinutos.min : rangoMinutos.min;
+                            
+                            agregarCargoSeleccionado(fila, desc, minutosInicial, 0, fianza, destino);
+                            
+                            alert(`Ingrese la cantidad en la "Calculadora de Estupefacientes" para ${nombreCargo}`);
+                        }
+                        return;
+                    }
                     
                     // Caso especial para Amenazas (mostrar modal de multa)
-                    if (desc.includes('Amenazas')) {
+                    if (nombreCargo.includes('Amenazas')) {
                         modalMultaDesc.textContent = desc;
                         multaInput.min = 1000;
                         multaInput.max = 50000;
@@ -1607,9 +1670,13 @@
                         return;
                     }
                     
+                    const rangoMinutos = extraerRangoMinutos(minStr);
+                    const multa = extraerMulta(multaStr);
+                    
                     // Si es un rango, mostrar el modal para seleccionar minutos
                     if (rangoMinutos.esRango) {
-                        modalCargoDesc.textContent = desc;
+                        modalTitulo.textContent = "Seleccionar minutos";
+                        modalDescripcion.textContent = desc;
                         modalRangoMinutos.textContent = `Rango: ${rangoMinutos.min} a ${rangoMinutos.max} minutos`;
                         minutosInput.min = rangoMinutos.min;
                         minutosInput.max = rangoMinutos.max;
@@ -1661,7 +1728,7 @@
                 }
             });
 
-            // Confirmar selección de minutos
+            // Confirmar selección de minutos (para cannabis y armas)
             confirmarBtn.addEventListener('click', function() {
                 const minutos = parseInt(minutosInput.value);
                 const min = parseInt(minutosInput.min);
@@ -1672,30 +1739,20 @@
                     return;
                 }
                 
-                const celdas = filaSeleccionada.cells;
-                let desc, multaStr, fianza, destino;
-                
-                if (celdas.length === 4) {
-                    desc = celdas[0].textContent;
-                    multaStr = celdas[2].textContent;
-                    fianza = celdas[3].querySelector('span')?.textContent.trim().toUpperCase() || '';
-                    destino = '';
-                } else if (celdas.length === 5) {
-                    desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
-                    multaStr = celdas[3].textContent;
-                    fianza = celdas[4].querySelector('span')?.textContent.trim().toUpperCase() || '';
-                    destino = '';
-                } else if (celdas.length === 6) {
-                    desc = `${celdas[0].textContent} - ${celdas[1].textContent}`;
-                    multaStr = celdas[3].textContent;
-                    fianza = '';
-                    destino = celdas[5].querySelector('span')?.textContent.trim().toUpperCase() || '';
+                // Actualizar minutos para cannabis
+                if (cargoCannabisIndex !== -1 && cargosSeleccionados[cargoCannabisIndex]) {
+                    cargosSeleccionados[cargoCannabisIndex].min = minutos;
                 }
                 
-                const multa = extraerMulta(multaStr);
-                agregarCargoSeleccionado(filaSeleccionada, desc, minutos, multa, fianza, destino);
+                // Actualizar minutos para armas
+                if (cargoArmaIndex !== -1 && cargosSeleccionados[cargoArmaIndex]) {
+                    cargosSeleccionados[cargoArmaIndex].min = minutos;
+                }
+                
+                // Actualizar la descripción en la lista
+                actualizarResumen();
+                
                 modalMinutos.style.display = 'none';
-                filaSeleccionada = null;
             });
 
             // Confirmar selección de multa (para Amenazas)
@@ -1736,7 +1793,18 @@
                     const destinoText = cargo.destino ? ` (${cargo.destino})` : '';
                     // Mostrar multa si existe (para Amenazas)
                     const multaText = cargo.multa > 0 ? ` - Multa: $${cargo.multa.toLocaleString()}` : '';
-                    span.textContent = `${cargo.desc}${cargo.min > 0 ? ` (${cargo.min} min)` : ''}${multaText}${destinoText}`;
+                    
+                    // Para cargos de armas o estupefacientes, mostrar información adicional
+                    let infoExtra = '';
+                    const nombreCargo = cargo.desc.includes(' - ') ? cargo.desc.split(' - ')[1] : cargo.desc;
+                    
+                    if (CARGOS_ARMAS.includes(nombreCargo)) {
+                        infoExtra = ' (Ver calculadora de armas)';
+                    } else if (CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
+                        infoExtra = ' (Ver calculadora de estupefacientes)';
+                    }
+                    
+                    span.textContent = `${cargo.desc}${cargo.min > 0 ? ` (${cargo.min} min)` : ''}${multaText}${destinoText}${infoExtra}`;
                     
                     const btn = document.createElement('button');
                     btn.className = 'btn-eliminar';
@@ -1759,8 +1827,10 @@
                         }
                     }
 
-                    // Sumar multas fijas
-                    totalMultasFijas += cargo.multa;
+                    // Sumar multas fijas (excluyendo cargos que usan calculadoras)
+                    if (!CARGOS_ARMAS.includes(nombreCargo) && !CARGOS_ESTUPEFACIENTES.includes(nombreCargo)) {
+                        totalMultasFijas += cargo.multa;
+                    }
 
                     if (cargo.fianza.includes('SIN FIANZA')) {
                         tieneSinFianza = true;
@@ -1848,6 +1918,37 @@
                 }
             }
 
+            function quitarCargo(index) {
+                if (cargosSeleccionados[index]) {
+                    // Remover la clase selected de la fila
+                    cargosSeleccionados[index].fila.classList.remove('selected');
+                    
+                    // Si es el cargo de cannabis, resetear variables
+                    const nombreCargo = cargosSeleccionados[index].desc.includes(' - ') ? 
+                        cargosSeleccionados[index].desc.split(' - ')[1] : cargosSeleccionados[index].desc;
+                    
+                    if (nombreCargo === "Posesión de Cannabis") {
+                        gramosCannabis = 0;
+                        cargoCannabisIndex = -1;
+                    }
+                    
+                    // Si es un cargo de armas, resetear variables
+                    if (CARGOS_ARMAS.includes(nombreCargo)) {
+                        if (cargoArmaIndex === index) {
+                            cargoArmaIndex = -1;
+                            cargoArmaMinRango = null;
+                            cargoArmaDesc = '';
+                        }
+                    }
+                    
+                    // Eliminar el cargo del array
+                    cargosSeleccionados.splice(index, 1);
+                    
+                    // Actualizar el resumen
+                    actualizarResumen();
+                }
+            }
+
             // Asignar eventos a las filas
             tables.forEach(table => {
                 const filas = table.querySelectorAll('tbody tr');
@@ -1861,18 +1962,16 @@
                 const filter = searchInput.value.toLowerCase().trim();
                 
                 // Ocultar siempre las calculadoras durante la búsqueda
-                const calculadoraMultas = document.querySelector('.calculadora-multas');
-                const calculadoraCategory = document.querySelector('.calculadora-multas-category');
-                const calculadoraEstupefacientes = document.querySelector('.calculadora-estupefacientes');
-                const calculadoraEstupefacientesCategory = document.querySelector('.calculadora-estupefacientes-category');
-                
-                if (calculadoraMultas && calculadoraCategory) {
-                    calculadoraMultas.style.display = 'none';
-                    calculadoraCategory.style.display = 'none';
+                if (calculadoraMultasTable) {
+                    calculadoraMultasTable.style.display = 'none';
                 }
-                
-                if (calculadoraEstupefacientes && calculadoraEstupefacientesCategory) {
-                    calculadoraEstupefacientes.style.display = 'none';
+                if (calculadoraMultasCategory) {
+                    calculadoraMultasCategory.style.display = 'none';
+                }
+                if (calculadoraEstupefacientesTable) {
+                    calculadoraEstupefacientesTable.style.display = 'none';
+                }
+                if (calculadoraEstupefacientesCategory) {
                     calculadoraEstupefacientesCategory.style.display = 'none';
                 }
                 
@@ -1890,8 +1989,8 @@
                     });
                     
                     // Mostrar las categorías de las calculadoras (pero no las tablas a menos que se haga clic)
-                    if (calculadoraCategory) {
-                        calculadoraCategory.style.display = 'flex';
+                    if (calculadoraMultasCategory) {
+                        calculadoraMultasCategory.style.display = 'flex';
                     }
                     if (calculadoraEstupefacientesCategory) {
                         calculadoraEstupefacientesCategory.style.display = 'flex';
@@ -1936,7 +2035,29 @@
             const balasInputs = document.querySelectorAll('.balas-input');
             
             balasInputs.forEach(input => {
-                input.addEventListener('input', calcularMultas);
+                input.addEventListener('input', function() {
+                    calcularMultas();
+                    
+                    // Después de calcular multas, verificar si hay cargos de armas con rango
+                    if (cargoArmaIndex !== -1 && cargoArmaMinRango) {
+                        // Verificar si se han ingresado balas (total > 0)
+                        let totalBalasIngresadas = 0;
+                        balasInputs.forEach(input => {
+                            totalBalasIngresadas += parseInt(input.value) || 0;
+                        });
+                        
+                        if (totalBalasIngresadas > 0) {
+                            // Mostrar modal para seleccionar minutos
+                            modalTitulo.textContent = "Seleccionar minutos para cargo de arma";
+                            modalDescripcion.textContent = cargoArmaDesc;
+                            modalRangoMinutos.textContent = `Rango: ${cargoArmaMinRango.min} a ${cargoArmaMinRango.max} minutos`;
+                            minutosInput.min = cargoArmaMinRango.min;
+                            minutosInput.max = cargoArmaMinRango.max;
+                            minutosInput.value = cargoArmaMinRango.min;
+                            modalMinutos.style.display = 'block';
+                        }
+                    }
+                });
             });
             
             function calcularMultas() {
@@ -1996,11 +2117,40 @@
                 
                 cantidadInputs.forEach(input => {
                     const row = input.closest('tr');
-                    const mensajeMaximo = row.querySelector('.mensaje-maximo');
+                    const tipoEstupefaciente = row.querySelector('td').textContent;
                     
                     let cantidad = parseInt(input.value) || 0;
                     const multaPorUnidad = parseInt(input.dataset.multa);
                     let total = cantidad * multaPorUnidad;
+                    
+                    // Caso especial para Posesión de Cannabis (Artículo 4)
+                    if (tipoEstupefaciente.includes("Posesión de Cannabis")) {
+                        gramosCannabis = cantidad;
+                        
+                        // Si hay más de 25 gramos, mostrar modal para seleccionar minutos
+                        if (cantidad > 25 && cargoCannabisIndex !== -1) {
+                            // Mostrar modal específico para cannabis
+                            modalTitulo.textContent = "Seleccionar minutos para Posesión de Cannabis";
+                            modalDescripcion.textContent = `Se detectaron ${cantidad} gramos de cannabis (más de 25g). Seleccione los minutos de prisión (12-36 min):`;
+                            modalRangoMinutos.textContent = `Rango: 12 a 36 minutos`;
+                            minutosInput.min = 12;
+                            minutosInput.max = 36;
+                            
+                            // Sugerir minutos basados en la cantidad
+                            let minutosSugeridos = 12;
+                            if (cantidad >= 75) {
+                                minutosSugeridos = 36;
+                            } else if (cantidad >= 50) {
+                                minutosSugeridos = 24;
+                            }
+                            
+                            minutosInput.value = minutosSugeridos;
+                            modalMinutos.style.display = 'block';
+                        } else if (cargoCannabisIndex !== -1) {
+                            // Si es 25 o menos gramos, quitar minutos
+                            cargosSeleccionados[cargoCannabisIndex].min = 0;
+                        }
+                    }
                     
                     // Actualizar el total de este estupefaciente
                     const totalEstupefacienteCell = row.querySelector('.total-estupefaciente');
@@ -2016,155 +2166,6 @@
                 actualizarResumen();
             }
         });
-
-        function quitarCargo(index) {
-            if (cargosSeleccionados[index]) {
-                // Remover la clase selected de la fila
-                cargosSeleccionados[index].fila.classList.remove('selected');
-                
-                // Eliminar el cargo del array
-                cargosSeleccionados.splice(index, 1);
-                
-                // Actualizar el resumen
-                const listaCargos = document.getElementById('lista-cargos');
-                const totalMin = document.getElementById('total-min');
-                const estadoFianza = document.getElementById('estado-fianza');
-                const totalMultas = document.getElementById('total-multas');
-                const totalBalasElement = document.getElementById('total-balas');
-                const totalEstupefacientesElement = document.getElementById('total-estupefacientes');
-                const totalPorMultar = document.getElementById('total-por-multar');
-                const limiteMultasMensaje = document.getElementById('limite-multas-mensaje');
-                const RestoContainer = document.getElementById('Resto-container');
-                const RestoMultas = document.getElementById('Resto-multas');
-                
-                listaCargos.innerHTML = '';
-                let total = 0;
-                let totalMultasFijas = 0;
-                let tieneSinFianza = false;
-                let tieneObligatoria = false;
-                let tieneOpcional = false;
-
-                cargosSeleccionados.forEach((cargo, i) => {
-                    const li = document.createElement('li');
-                    li.setAttribute('data-index', i);
-                    
-                    const span = document.createElement('span');
-                    // Mostrar destino si existe (para cargos de tránsito)
-                    const destinoText = cargo.destino ? ` (${cargo.destino})` : '';
-                    // Mostrar multa si existe (para Amenazas)
-                    const multaText = cargo.multa > 0 ? ` - Multa: $${cargo.multa.toLocaleString()}` : '';
-                    span.textContent = `${cargo.desc}${cargo.min > 0 ? ` (${cargo.min} min)` : ''}${multaText}${destinoText}`;
-                    
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-eliminar';
-                    btn.textContent = 'X';
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        quitarCargo(i);
-                    });
-                    
-                    li.appendChild(span);
-                    li.appendChild(btn);
-                    listaCargos.appendChild(li);
-                    
-                    // Sumar minutos solo si no hemos alcanzado el límite
-                    if (total < LIMITE_MINUTOS) {
-                        total += cargo.min;
-                        // Asegurarnos de no pasar el límite
-                        if (total > LIMITE_MINUTOS) {
-                            total = LIMITE_MINUTOS;
-                        }
-                    }
-
-                    // Sumar multas fijas
-                    totalMultasFijas += cargo.multa;
-
-                    if (cargo.fianza.includes('SIN FIANZA')) {
-                        tieneSinFianza = true;
-                    } else if (cargo.fianza.includes('OBLIGATORIA') || cargo.fianza.includes('OBLIGATORIO')) {
-                        tieneObligatoria = true;
-                    } else if (cargo.fianza.includes('OPCIONAL') || cargo.fianza.includes('SÍ')) {
-                        tieneOpcional = true;
-                    }
-                });
-
-                // Aplicar límite de minutos
-                if (total > LIMITE_MINUTOS) {
-                    total = LIMITE_MINUTOS;
-                }
-
-                totalMin.textContent = total;
-                
-                // Verificar si se alcanzó el límite de minutos
-                if (total >= LIMITE_MINUTOS) {
-                    totalMin.classList.add('limite-alcanzado');
-                } else {
-                    totalMin.classList.remove('limite-alcanzado');
-                }
-
-                // Calcular multas fijas y Resto
-                let multasDentroLimite = totalMultasFijas;
-                let Resto = 0;
-                
-                if (totalMultasFijas > LIMITE_MULTAS) {
-                    multasDentroLimite = LIMITE_MULTAS;
-                    Resto = totalMultasFijas - LIMITE_MULTAS;
-                    limiteMultasMensaje.style.display = 'inline';
-                } else {
-                    limiteMultasMensaje.style.display = 'none';
-                }
-
-                totalMultas.textContent = `$${multasDentroLimite.toLocaleString()}`;
-                
-                // Mostrar u ocultar el Resto según sea necesario
-                if (Resto > 0) {
-                    RestoContainer.style.display = 'block';
-                    RestoMultas.textContent = `$${Resto.toLocaleString()}`;
-                } else {
-                    RestoContainer.style.display = 'none';
-                }
-
-                // Actualizar total de multas por balas
-                totalBalasElement.textContent = `$${totalBalas.toLocaleString()}`;
-
-                // Actualizar total de multas por estupefacientes
-                totalEstupefacientesElement.textContent = `$${totalEstupefacientes.toLocaleString()}`;
-
-                // Calcular total por multar (Resto + multas por balas + multas por estupefacientes)
-                const totalPorMultarValor = Resto + totalBalas + totalEstupefacientes;
-                totalPorMultar.textContent = `$${totalPorMultarValor.toLocaleString()}`;
-
-                // Calcular fianza con límite
-                let fianzaCalculada = total * 4000;
-                if (fianzaCalculada > LIMITE_FIANZA) {
-                    fianzaCalculada = LIMITE_FIANZA;
-                }
-
-                if (tieneSinFianza) {
-                    estadoFianza.innerHTML = `<span class="fianza-sin">SIN FIANZA</span>`;
-                } else if (tieneObligatoria) {
-                    estadoFianza.innerHTML = `<span class="fianza-obligatoria">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OBLIGATORIA</span>`;
-                } else if (tieneOpcional) {
-                    estadoFianza.innerHTML = `<span class="fianza-opcional">$${Math.min(fianzaCalculada, LIMITE_FIANZA).toLocaleString()} - OPCIONAL</span>`;
-                } else {
-                    estadoFianza.innerHTML = `$0`;
-                }
-
-                // Verificar si se alcanzó el límite de fianza
-                if (fianzaCalculada >= LIMITE_FIANZA && !tieneSinFianza) {
-                    const spanFianza = estadoFianza.querySelector('span');
-                    if (spanFianza) {
-                        spanFianza.classList.remove('fianza-limite', 'fianza-opcional', 'fianza-obligatoria', 'fianza-sin');
-
-                        if (tieneObligatoria) {
-                            spanFianza.classList.add('fianza-obligatoria');
-                        } else if (tieneOpcional) {
-                            spanFianza.classList.add('fianza-opcional');
-                        }
-                    }
-                }
-            }
-        }
     </script>
 </body>
 </html>
